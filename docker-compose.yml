@@ -29,7 +29,8 @@ services:
   app:
     image: vapor-vips:latest
     build:
-      context: .
+      context: ..
+      dockerfile: vapor-vips/Dockerfile
     environment:
       <<: *shared_environment
     depends_on:
@@ -41,7 +42,8 @@ services:
   migrate:
     image: vapor-vips:latest
     build:
-      context: .
+      context: ..
+      dockerfile: vapor-vips/Dockerfile
     environment:
       <<: *shared_environment
     depends_on:
@@ -52,7 +54,8 @@ services:
   revert:
     image: vapor-vips:latest
     build:
-      context: .
+      context: ..
+      dockerfile: vapor-vips/Dockerfile
     environment:
       <<: *shared_environment
     depends_on:

@@ -1,12 +1,310 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hokusai Image Processing Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <title>#(title)</title>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .icon {
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info-box {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+
+        .info-box p {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 3rem;
+            opacity: 0.9;
+        }
+    </style>
 </head>
-
 <body>
-  <h1>#(title)</h1>
+    <div class="container">
+        <header>
+            <h1>🎨 Hokusai Image Processing</h1>
+            <p class="subtitle">Advanced image processing with ImageMagick + libvips</p>
+        </header>
+
+        <div class="features-grid">
+            <!-- Text Overlay -->
+            <div class="feature-card">
+                <h2><span class="icon">✍️</span> Text Overlay</h2>
+                <form action="/demo/text" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="text-image">Choose Image</label>
+                        <input type="file" id="text-image" name="image" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="text-content">Text</label>
+                        <input type="text" id="text-content" name="text" placeholder="Enter text..." required>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="text-fontSize">Font Size</label>
+                            <input type="number" id="text-fontSize" name="fontSize" value="48" min="12" max="200">
+                        </div>
+                        <div class="form-group">
+                            <label for="text-strokeWidth">Stroke Width</label>
+                            <input type="number" id="text-strokeWidth" name="strokeWidth" value="2" min="0" max="10" step="0.5">
+                        </div>
+                    </div>
+                    <button type="submit">Add Text Overlay</button>
+                </form>
+            </div>
+
+            <!-- Resize -->
+            <div class="feature-card">
+                <h2><span class="icon">📐</span> Resize Image</h2>
+                <form action="/demo/resize" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="resize-image">Choose Image</label>
+                        <input type="file" id="resize-image" name="image" accept="image/*" required>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="resize-width">Width (px)</label>
+                            <input type="number" id="resize-width" name="width" value="800" min="50" max="4000">
+                        </div>
+                        <div class="form-group">
+                            <label for="resize-height">Height (px)</label>
+                            <input type="number" id="resize-height" name="height" value="600" min="50" max="4000">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="resize-fit">Fit Mode</label>
+                        <select id="resize-fit" name="fit">
+                            <option value="inside">Inside (preserve ratio)</option>
+                            <option value="cover">Cover (crop to fill)</option>
+                            <option value="fill">Fill (ignore ratio)</option>
+                        </select>
+                    </div>
+                    <button type="submit">Resize Image</button>
+                </form>
+            </div>
+
+            <!-- Format Conversion -->
+            <div class="feature-card">
+                <h2><span class="icon">🔄</span> Convert Format</h2>
+                <form action="/demo/convert" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="convert-image">Choose Image</label>
+                        <input type="file" id="convert-image" name="image" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="convert-format">Output Format</label>
+                        <select id="convert-format" name="format">
+                            <option value="jpeg">JPEG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WebP</option>
+                            <option value="avif">AVIF</option>
+                            <option value="gif">GIF</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="convert-quality">Quality (1-100)</label>
+                        <input type="number" id="convert-quality" name="quality" value="85" min="1" max="100">
+                    </div>
+                    <button type="submit">Convert Format</button>
+                </form>
+            </div>
+
+            <!-- Certificate Generator -->
+            <div class="feature-card">
+                <h2><span class="icon">🏆</span> Generate Certificate</h2>
+                <form action="/demo/certificate" method="GET">
+                    <div class="form-group">
+                        <label for="cert-name">Recipient Name</label>
+                        <input type="text" id="cert-name" name="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="info-box">
+                        <p>Generates a certificate with custom font (Passero One) and text effects.</p>
+                    </div>
+                    <button type="submit">Generate Certificate</button>
+                </form>
+            </div>
+
+            <!-- Rotate -->
+            <div class="feature-card">
+                <h2><span class="icon">↻</span> Rotate Image</h2>
+                <form action="/demo/rotate" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="rotate-image">Choose Image</label>
+                        <input type="file" id="rotate-image" name="image" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rotate-angle">Rotation</label>
+                        <select id="rotate-angle" name="angle">
+                            <option value="90">90° Clockwise</option>
+                            <option value="180">180°</option>
+                            <option value="270">270° (90° Counter-clockwise)</option>
+                        </select>
+                    </div>
+                    <button type="submit">Rotate Image</button>
+                </form>
+            </div>
+
+            <!-- Image Info -->
+            <div class="feature-card">
+                <h2><span class="icon">ℹ️</span> Image Info</h2>
+                <form action="/demo/metadata" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="info-image">Choose Image</label>
+                        <input type="file" id="info-image" name="image" accept="image/*" required>
+                    </div>
+                    <div class="info-box">
+                        <p>Extract metadata: dimensions, format, color space, and more.</p>
+                    </div>
+                    <button type="submit">Get Image Info</button>
+                </form>
+            </div>
+        </div>
+
+        <footer>
+            <p>Powered by Hokusai • ImageMagick + libvips • Built with Vapor</p>
+        </footer>
+    </div>
+
+    <script>
+        // Add loading state to forms
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const button = this.querySelector('button[type="submit"]');
+                button.textContent = 'Processing...';
+                button.disabled = true;
+            });
+        });
+    </script>
 </body>
 </html>

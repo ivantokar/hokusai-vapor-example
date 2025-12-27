@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "VaporVips",
     platforms: [
-       .macOS(.v13)
+        .macOS(.v13)
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
@@ -17,6 +17,9 @@ let package = Package(
         .package(url: "https://github.com/vapor/leaf.git", from: "4.3.0"),
         // 🔵 Non-blocking, event-driven networking for Swift. Used for custom executors
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.65.0"),
+        // 🎨 Hokusai Vapor integration (use SSH URL for private repos)
+        // For local development: .package(path: "../hokusai-vapor")
+        .package(url: "git@github.com:ivantokar/hokusai-vapor.git", branch: "main"),
     ],
     targets: [
         .executableTarget(
@@ -26,6 +29,7 @@ let package = Package(
                 .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
                 .product(name: "Leaf", package: "leaf"),
                 .product(name: "Vapor", package: "vapor"),
+                .product(name: "HokusaiVapor", package: "hokusai-vapor"),
                 .product(name: "NIOCore", package: "swift-nio"),
                 .product(name: "NIOPosix", package: "swift-nio"),
             ],

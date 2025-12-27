@@ -7,35 +7,45 @@ FROM swift:6.1-noble AS build
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get -q update \
     && apt-get -q dist-upgrade -y \
-    && apt-get install -y libjemalloc-dev
+    && apt-get install -y \
+      libjemalloc-dev \
+      libvips-dev \
+      libmagick++-dev \
+      libmagickwand-dev \
+      pkg-config
+
+# Create pkg-config symlinks for ImageMagick compatibility
+RUN ln -s /usr/lib/$(uname -m)-linux-gnu/pkgconfig/MagickWand-6.Q16.pc /usr/lib/$(uname -m)-linux-gnu/pkgconfig/MagickWand.pc || true
 
 # Set up a build area
-WORKDIR /build
+WORKDIR /build/vapor-vips
 
 # First just resolve dependencies.
 # This creates a cached layer that can be reused
 # as long as your Package.swift/Package.resolved
 # files do not change.
-COPY ./Package.* ./
+COPY vapor-vips/Package.* ./
+COPY hokusai ../hokusai
+COPY hokusai-vapor ../hokusai-vapor
 RUN swift package resolve \
         $([ -f ./Package.resolved ] && echo "--force-resolved-versions" || true)
 
-# Copy entire repo into container
-COPY . .
+# Copy the Vapor app sources into the build area
+COPY vapor-vips/. .
 
 RUN mkdir /staging
 
 # Build the application, with optimizations, with static linking, and using jemalloc
 # N.B.: The static version of jemalloc is incompatible with the static Swift runtime.
-RUN --mount=type=cache,target=/build/.build \
-    swift build -c release \
+RUN --mount=type=cache,target=/build/vapor-vips/.build \
+    set -eux; \
+    swift build -c release -v \
         --product VaporVips \
         --static-swift-stdlib \
-        -Xlinker -ljemalloc && \
-    # Copy main executable to staging area
-    cp "$(swift build -c release --show-bin-path)/VaporVips" /staging && \
-    # Copy resources bundled by SPM to staging area
-    find -L "$(swift build -c release --show-bin-path)" -regex '.*\.resources$' -exec cp -Ra {} /staging \;
+        -Xlinker -ljemalloc; \
+    BIN_PATH="$(swift build -c release --show-bin-path)"; \
+    cp "${BIN_PATH}/VaporVips" /staging; \
+    find -L "${BIN_PATH}" -regex '.*\.resources$' -exec cp -Ra {} /staging \;
 
 
 # Switch to the staging area
@@ -62,11 +72,27 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
       libjemalloc2 \
       ca-certificates \
       tzdata \
-# If your app or its dependencies import FoundationNetworking, also install `libcurl4`.
-      # libcurl4 \
-# If your app or its dependencies import FoundationXML, also install `libxml2`.
-      # libxml2 \
+      libvips \
+      libpango-1.0-0 \
+      libpangocairo-1.0-0 \
+      libpangoft2-1.0-0 \
+      fonts-dejavu-core \
+      libmagickcore-6.q16-7 \
+      libmagickwand-6.q16-7 \
+      fonts-liberation \
+      fontconfig \
     && rm -r /var/lib/apt/lists/*
+
+# Copy and install Passero_One font
+COPY tmp/Passero_One /usr/share/fonts/custom/
+RUN fc-cache -f -v
+
+# Copy certificate template
+RUN mkdir -p /app/tmp
+COPY tmp/certifcate.png /app/tmp/certifcate.png
+
+# If your app or its dependencies import FoundationNetworking, also install `libcurl4`.
+# If your app or its dependencies import FoundationXML, also install `libxml2`.
 
 # Create a vapor user and group with /app as its home directory
 RUN useradd --user-group --create-home --system --skel /dev/null --home-dir /app vapor
