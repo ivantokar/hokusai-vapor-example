@@ -15,7 +15,7 @@ A complete Vapor application demonstrating the [Hokusai](https://github.com/ivan
 - ↻ **Rotate** - 90°, 180°, 270° rotations
 - ℹ️ **Metadata** - Extract image information
 - 🏆 **Certificate Generator** - Generate certificates with custom fonts
-- 🐳 **Docker Ready** - Full Docker deployment with PostgreSQL
+- 🐳 **Docker Ready** - Full Docker deployment support
 
 ## Quick Start
 
@@ -52,9 +52,6 @@ The web UI provides interactive forms for testing all features!
 # From the workspace root directory
 docker compose -f hokusai-vapor-example/docker-compose.yml build
 docker compose -f hokusai-vapor-example/docker-compose.yml up app
-
-# Run migrations
-docker compose -f hokusai-vapor-example/docker-compose.yml run migrate
 
 # Open browser to http://localhost:8080
 ```
@@ -232,8 +229,7 @@ hokusai-vapor-example/
 │       ├── configure.swift
 │       ├── routes.swift
 │       └── Controllers/
-│           ├── TodoController.swift
-│           ├── CertificateController.swift
+│           ├── CertificateController.swift   # Certificate generation
 │           └── DemoController.swift          # Web UI form handlers
 ├── Resources/
 │   └── Views/
@@ -275,9 +271,6 @@ docker compose -f hokusai-vapor-example/docker-compose.yml build
 
 # Start app
 docker compose -f hokusai-vapor-example/docker-compose.yml up app
-
-# Run migrations
-docker compose -f hokusai-vapor-example/docker-compose.yml run migrate
 
 # View logs
 docker compose -f hokusai-vapor-example/docker-compose.yml logs -f app
