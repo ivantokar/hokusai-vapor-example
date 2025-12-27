@@ -49,7 +49,7 @@ The web UI provides interactive forms for testing all features!
 ### Run with Docker
 
 ```bash
-# From the workspace root (/Users/ivantokar/Work/vips)
+# From the workspace root directory
 docker compose -f hokusai-vapor-example/docker-compose.yml build
 docker compose -f hokusai-vapor-example/docker-compose.yml up app
 
@@ -269,9 +269,7 @@ swift build
 
 ### Build and Run
 ```bash
-# From workspace root
-cd /Users/ivantokar/Work/vips
-
+# From workspace root directory
 # Build all services
 docker compose -f hokusai-vapor-example/docker-compose.yml build
 
@@ -378,7 +376,8 @@ ssh -T git@github.com
 ### Font Issues
 
 **Local development:**
-- Fonts are loaded from `/Users/ivantokar/Work/vips/tmp/Passero_One/`
+- Configure font paths in `DemoController.swift` for your environment
+- Example: Custom fonts can be placed in a `tmp/` directory
 
 **Docker:**
 - Fonts are installed in `/usr/share/fonts/custom/`
