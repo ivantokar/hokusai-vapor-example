@@ -16,28 +16,38 @@ struct DemoController: RouteCollection {
 
     // Text Overlay
     func textOverlay(req: Request) async throws -> Response {
-        struct FormData: Content {
-            let text: String
-            let fontSize: Int?
-            let strokeWidth: Double?
+        // Decode multipart form data manually
+        struct FormInput: Content {
+            var text: String
+            var fontSize: Int?
+            var strokeWidth: Double?
+            var image: File
         }
 
-        let formData = try req.content.decode(FormData.self)
-        let image = try await req.hokusaiImage(field: "image")
+        let input = try req.content.decode(FormInput.self)
+
+        // Convert file to HokusaiImage
+        guard let data = input.image.data.getData(
+            at: input.image.data.readerIndex,
+            length: input.image.data.readableBytes
+        ) else {
+            throw Abort(.badRequest, reason: "Failed to read image data")
+        }
+        let image = try await Hokusai.image(from: data)
 
         var textOptions = TextOptions()
         textOptions.font = "DejaVu-Sans"
-        textOptions.fontSize = formData.fontSize ?? 48
+        textOptions.fontSize = input.fontSize ?? 48
         textOptions.color = [255, 255, 255, 255]  // White
         textOptions.strokeColor = [0, 0, 0, 255]   // Black outline
-        textOptions.strokeWidth = formData.strokeWidth ?? 2.0
+        textOptions.strokeWidth = input.strokeWidth ?? 2.0
 
         // Center text
         let x = try image.width / 2
         let y = try image.height / 2
 
         let withText = try image.drawText(
-            formData.text,
+            input.text,
             x: x,
             y: y,
             options: textOptions
@@ -48,19 +58,27 @@ struct DemoController: RouteCollection {
 
     // Resize Image
     func resizeImage(req: Request) async throws -> Response {
-        struct FormData: Content {
-            let width: Int?
-            let height: Int?
-            let fit: String?
+        struct FormInput: Content {
+            var width: Int?
+            var height: Int?
+            var fit: String?
+            var image: File
         }
 
-        let formData = try req.content.decode(FormData.self)
-        let image = try await req.hokusaiImage(field: "image")
+        let input = try req.content.decode(FormInput.self)
+
+        guard let data = input.image.data.getData(
+            at: input.image.data.readerIndex,
+            length: input.image.data.readableBytes
+        ) else {
+            throw Abort(.badRequest, reason: "Failed to read image data")
+        }
+        let image = try await Hokusai.image(from: data)
 
         var options = ResizeOptions()
 
         // Map fit mode
-        switch formData.fit {
+        switch input.fit {
         case "cover":
             options.fit = .cover
         case "fill":
@@ -72,8 +90,8 @@ struct DemoController: RouteCollection {
         }
 
         let resized = try image.resize(
-            width: formData.width,
-            height: formData.height,
+            width: input.width,
+            height: input.height,
             options: options
         )
 
@@ -82,17 +100,25 @@ struct DemoController: RouteCollection {
 
     // Convert Format
     func convertFormat(req: Request) async throws -> Response {
-        struct FormData: Content {
-            let format: String
-            let quality: Int?
+        struct FormInput: Content {
+            var format: String
+            var quality: Int?
+            var image: File
         }
 
-        let formData = try req.content.decode(FormData.self)
-        let image = try await req.hokusaiImage(field: "image")
+        let input = try req.content.decode(FormInput.self)
+
+        guard let data = input.image.data.getData(
+            at: input.image.data.readerIndex,
+            length: input.image.data.readableBytes
+        ) else {
+            throw Abort(.badRequest, reason: "Failed to read image data")
+        }
+        let image = try await Hokusai.image(from: data)
 
         return try image.response(
-            format: formData.format,
-            quality: formData.quality ?? 85
+            format: input.format,
+            quality: input.quality ?? 85
         )
     }
 
@@ -144,16 +170,24 @@ struct DemoController: RouteCollection {
 
     // Rotate Image
     func rotateImage(req: Request) async throws -> Response {
-        struct FormData: Content {
-            let angle: Int
+        struct FormInput: Content {
+            var angle: Int
+            var image: File
         }
 
-        let formData = try req.content.decode(FormData.self)
-        let image = try await req.hokusaiImage(field: "image")
+        let input = try req.content.decode(FormInput.self)
+
+        guard let data = input.image.data.getData(
+            at: input.image.data.readerIndex,
+            length: input.image.data.readableBytes
+        ) else {
+            throw Abort(.badRequest, reason: "Failed to read image data")
+        }
+        let image = try await Hokusai.image(from: data)
 
         let rotated: HokusaiImage
 
-        switch formData.angle {
+        switch input.angle {
         case 90:
             rotated = try image.rotate(angle: .degree90)
         case 180:
