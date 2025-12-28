@@ -38,7 +38,7 @@
     </script>
     <style>
         .nav-item {
-            @apply px-3 py-2 text-sm rounded-md cursor-pointer transition-colors;
+            @apply block px-3 py-2 text-sm cursor-pointer transition-colors;
         }
         .nav-item:hover {
             @apply bg-secondary;
@@ -46,17 +46,8 @@
         .nav-item.active {
             @apply bg-secondary font-medium;
         }
-        .code-tab {
-            @apply px-3 py-1.5 text-xs font-medium border-b-2 cursor-pointer transition-colors;
-        }
-        .code-tab.active {
-            @apply border-primary text-foreground;
-        }
-        .code-tab:not(.active) {
-            @apply border-transparent text-muted-foreground hover:text-foreground;
-        }
         pre[class*="language-"] {
-            @apply rounded-md text-xs my-0;
+            @apply rounded-md text-sm my-0;
         }
         .feature-section {
             @apply hidden;
@@ -75,26 +66,26 @@
                 <p class="text-xs text-muted-foreground mt-1">Image Processing</p>
             </div>
             <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-                <div class="nav-item active" onclick="switchFeature('text')">Text Overlay</div>
-                <div class="nav-item" onclick="switchFeature('resize')">Resize Image</div>
-                <div class="nav-item" onclick="switchFeature('convert')">Convert Format</div>
-                <div class="nav-item" onclick="switchFeature('rotate')">Rotate Image</div>
-                <div class="nav-item" onclick="switchFeature('cert')">Generate Certificate</div>
-                <div class="nav-item" onclick="switchFeature('meta')">Image Metadata</div>
+                <a href="#" class="nav-item active" onclick="switchFeature(event, 'text')">Text Overlay</a>
+                <a href="#" class="nav-item" onclick="switchFeature(event, 'resize')">Resize Image</a>
+                <a href="#" class="nav-item" onclick="switchFeature(event, 'convert')">Convert Format</a>
+                <a href="#" class="nav-item" onclick="switchFeature(event, 'rotate')">Rotate Image</a>
+                <a href="#" class="nav-item" onclick="switchFeature(event, 'cert')">Generate Certificate</a>
+                <a href="#" class="nav-item" onclick="switchFeature(event, 'meta')">Image Metadata</a>
             </nav>
             <div class="p-4 border-t border-border text-xs text-muted-foreground">
                 <a href="https://github.com/ivantokar/hokusai" class="hover:text-foreground underline">GitHub</a>
             </div>
         </aside>
 
-        <!-- Center Form -->
+        <!-- Center Content -->
         <main class="flex-1 overflow-y-auto p-8">
             <!-- Text Overlay -->
-            <div id="text-section" class="feature-section active">
+            <div id="text-section" class="feature-section active max-w-2xl">
                 <h2 class="text-2xl font-semibold mb-2">Text Overlay</h2>
                 <p class="text-sm text-muted-foreground mb-6">Add text with custom fonts, strokes, and effects using ImageMagick</p>
 
-                <form action="/demo/text" method="post" enctype="multipart/form-data" class="space-y-4 max-w-md">
+                <form action="/demo/text" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
                     <div>
                         <label class="block text-sm font-medium mb-2">Image</label>
                         <input type="file" name="image" accept="image/*" required
@@ -121,14 +112,46 @@
                         Process Image
                     </button>
                 </form>
+
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">cURL</h3>
+                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/text \
+  -F "image=@photo.jpg" \
+  -F "text=Hello World" \
+  -F "fontSize=64" \
+  -F "strokeWidth=2" \
+  -o output.jpg</code></pre>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">Swift</h3>
+                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+
+var textOptions = TextOptions()
+textOptions.font = "DejaVu-Sans"
+textOptions.fontSize = 64
+textOptions.color = [255, 255, 255, 255]
+textOptions.strokeColor = [0, 0, 0, 255]
+textOptions.strokeWidth = 2.0
+
+let result = try image.drawText(
+    "Hello World",
+    x: try image.width / 2,
+    y: try image.height / 2,
+    options: textOptions
+)
+
+try result.toFile("output.jpg", quality: 90)</code></pre>
+                    </div>
+                </div>
             </div>
 
             <!-- Resize Image -->
-            <div id="resize-section" class="feature-section">
+            <div id="resize-section" class="feature-section max-w-2xl">
                 <h2 class="text-2xl font-semibold mb-2">Resize Image</h2>
                 <p class="text-sm text-muted-foreground mb-6">High-performance resizing with multiple fit modes using libvips</p>
 
-                <form action="/demo/resize" method="post" enctype="multipart/form-data" class="space-y-4 max-w-md">
+                <form action="/demo/resize" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
                     <div>
                         <label class="block text-sm font-medium mb-2">Image</label>
                         <input type="file" name="image" accept="image/*" required
@@ -158,14 +181,41 @@
                         Resize Image
                     </button>
                 </form>
+
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">cURL</h3>
+                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/resize \
+  -F "image=@photo.jpg" \
+  -F "width=800" \
+  -F "height=600" \
+  -F "fit=inside" \
+  -o resized.jpg</code></pre>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">Swift</h3>
+                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+
+var options = ResizeOptions()
+options.fit = .inside
+
+let resized = try image.resize(
+    width: 800,
+    height: 600,
+    options: options
+)
+
+try resized.toFile("output.jpg", quality: 85)</code></pre>
+                    </div>
+                </div>
             </div>
 
             <!-- Convert Format -->
-            <div id="convert-section" class="feature-section">
+            <div id="convert-section" class="feature-section max-w-2xl">
                 <h2 class="text-2xl font-semibold mb-2">Convert Format</h2>
                 <p class="text-sm text-muted-foreground mb-6">Convert between JPEG, PNG, WebP, AVIF, and GIF formats</p>
 
-                <form action="/demo/convert" method="post" enctype="multipart/form-data" class="space-y-4 max-w-md">
+                <form action="/demo/convert" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
                     <div>
                         <label class="block text-sm font-medium mb-2">Image</label>
                         <input type="file" name="image" accept="image/*" required
@@ -190,14 +240,31 @@
                         Convert Image
                     </button>
                 </form>
+
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">cURL</h3>
+                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/convert \
+  -F "image=@photo.jpg" \
+  -F "format=webp" \
+  -F "quality=80" \
+  -o output.webp</code></pre>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">Swift</h3>
+                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+
+try image.toFile("output.webp", quality: 80)</code></pre>
+                    </div>
+                </div>
             </div>
 
             <!-- Rotate Image -->
-            <div id="rotate-section" class="feature-section">
+            <div id="rotate-section" class="feature-section max-w-2xl">
                 <h2 class="text-2xl font-semibold mb-2">Rotate Image</h2>
                 <p class="text-sm text-muted-foreground mb-6">Fast 90°, 180°, and 270° rotations</p>
 
-                <form action="/demo/rotate" method="post" enctype="multipart/form-data" class="space-y-4 max-w-md">
+                <form action="/demo/rotate" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
                     <div>
                         <label class="block text-sm font-medium mb-2">Image</label>
                         <input type="file" name="image" accept="image/*" required
@@ -215,14 +282,32 @@
                         Rotate Image
                     </button>
                 </form>
+
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">cURL</h3>
+                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/rotate \
+  -F "image=@photo.jpg" \
+  -F "angle=90" \
+  -o rotated.jpg</code></pre>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">Swift</h3>
+                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+
+let rotated = try image.rotate(angle: .degree90)
+
+try rotated.toFile("output.jpg", quality: 85)</code></pre>
+                    </div>
+                </div>
             </div>
 
             <!-- Generate Certificate -->
-            <div id="cert-section" class="feature-section">
+            <div id="cert-section" class="feature-section max-w-2xl">
                 <h2 class="text-2xl font-semibold mb-2">Generate Certificate</h2>
                 <p class="text-sm text-muted-foreground mb-6">Create personalized certificates with custom fonts</p>
 
-                <form action="/demo/certificate" method="get" class="space-y-4 max-w-md">
+                <form action="/demo/certificate" method="get" class="space-y-4 mb-8">
                     <div>
                         <label class="block text-sm font-medium mb-2">Recipient Name</label>
                         <input type="text" name="name" placeholder="John Doe" required
@@ -232,131 +317,15 @@
                         Generate Certificate
                     </button>
                 </form>
-            </div>
 
-            <!-- Image Metadata -->
-            <div id="meta-section" class="feature-section">
-                <h2 class="text-2xl font-semibold mb-2">Image Metadata</h2>
-                <p class="text-sm text-muted-foreground mb-6">Extract image dimensions, format, and properties</p>
-
-                <form action="/demo/metadata" method="post" enctype="multipart/form-data" class="space-y-4 max-w-md">
+                <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium mb-2">Image</label>
-                        <input type="file" name="image" accept="image/*" required
-                               class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
-                    </div>
-                    <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm hover:bg-primary/90 transition-colors">
-                        Get Metadata
-                    </button>
-                </form>
-            </div>
-        </main>
-
-        <!-- Right Code Examples -->
-        <aside class="w-96 border-l border-border flex flex-col bg-secondary/30">
-            <div class="border-b border-border flex">
-                <button class="code-tab active flex-1" onclick="switchCodeTab('curl')">cURL</button>
-                <button class="code-tab flex-1" onclick="switchCodeTab('swift')">Swift</button>
-            </div>
-
-            <div class="flex-1 overflow-y-auto p-4">
-                <!-- Text Overlay Code -->
-                <div id="text-code" class="code-section">
-                    <div id="text-curl" class="code-example">
-                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/text \
-  -F "image=@photo.jpg" \
-  -F "text=Hello World" \
-  -F "fontSize=64" \
-  -F "strokeWidth=2" \
-  -o output.jpg</code></pre>
-                    </div>
-                    <div id="text-swift" class="code-example hidden">
-                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
-
-var textOptions = TextOptions()
-textOptions.font = "DejaVu-Sans"
-textOptions.fontSize = 64
-textOptions.color = [255, 255, 255, 255]
-textOptions.strokeColor = [0, 0, 0, 255]
-textOptions.strokeWidth = 2.0
-
-let result = try image.drawText(
-    "Hello World",
-    x: try image.width / 2,
-    y: try image.height / 2,
-    options: textOptions
-)
-
-try result.toFile("output.jpg", quality: 90)</code></pre>
-                    </div>
-                </div>
-
-                <!-- Resize Code -->
-                <div id="resize-code" class="code-section hidden">
-                    <div id="resize-curl" class="code-example">
-                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/resize \
-  -F "image=@photo.jpg" \
-  -F "width=800" \
-  -F "height=600" \
-  -F "fit=inside" \
-  -o resized.jpg</code></pre>
-                    </div>
-                    <div id="resize-swift" class="code-example hidden">
-                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
-
-var options = ResizeOptions()
-options.fit = .inside
-
-let resized = try image.resize(
-    width: 800,
-    height: 600,
-    options: options
-)
-
-try resized.toFile("output.jpg", quality: 85)</code></pre>
-                    </div>
-                </div>
-
-                <!-- Convert Code -->
-                <div id="convert-code" class="code-section hidden">
-                    <div id="convert-curl" class="code-example">
-                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/convert \
-  -F "image=@photo.jpg" \
-  -F "format=webp" \
-  -F "quality=80" \
-  -o output.webp</code></pre>
-                    </div>
-                    <div id="convert-swift" class="code-example hidden">
-                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
-
-try image.toFile("output.webp", quality: 80)</code></pre>
-                    </div>
-                </div>
-
-                <!-- Rotate Code -->
-                <div id="rotate-code" class="code-section hidden">
-                    <div id="rotate-curl" class="code-example">
-                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/rotate \
-  -F "image=@photo.jpg" \
-  -F "angle=90" \
-  -o rotated.jpg</code></pre>
-                    </div>
-                    <div id="rotate-swift" class="code-example hidden">
-                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
-
-let rotated = try image.rotate(angle: .degree90)
-
-try rotated.toFile("output.jpg", quality: 85)</code></pre>
-                    </div>
-                </div>
-
-                <!-- Certificate Code -->
-                <div id="cert-code" class="code-section hidden">
-                    <div id="cert-curl" class="code-example">
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">cURL</h3>
                         <pre><code class="language-bash">curl -X GET "http://localhost:8080/demo/certificate?name=John%20Doe" \
   -o certificate.png</code></pre>
                     </div>
-                    <div id="cert-swift" class="code-example hidden">
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">Swift</h3>
                         <pre><code class="language-swift">let template = try await Hokusai.image(from: "template.png")
 
 var textOptions = TextOptions()
@@ -376,14 +345,32 @@ let certificate = try template.drawText(
 try certificate.toFile("certificate.png", compression: 9)</code></pre>
                     </div>
                 </div>
+            </div>
 
-                <!-- Metadata Code -->
-                <div id="meta-code" class="code-section hidden">
-                    <div id="meta-curl" class="code-example">
+            <!-- Image Metadata -->
+            <div id="meta-section" class="feature-section max-w-2xl">
+                <h2 class="text-2xl font-semibold mb-2">Image Metadata</h2>
+                <p class="text-sm text-muted-foreground mb-6">Extract image dimensions, format, and properties</p>
+
+                <form action="/demo/metadata" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Image</label>
+                        <input type="file" name="image" accept="image/*" required
+                               class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                        Get Metadata
+                    </button>
+                </form>
+
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">cURL</h3>
                         <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/metadata \
   -F "image=@photo.jpg"</code></pre>
                     </div>
-                    <div id="meta-swift" class="code-example hidden">
+                    <div>
+                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">Swift</h3>
                         <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
 let metadata = try image.metadata()
 
@@ -395,50 +382,29 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
                     </div>
                 </div>
             </div>
-        </aside>
+        </main>
     </div>
 
     <script>
-        let currentFeature = 'text';
-        let currentCodeTab = 'curl';
+        function switchFeature(event, feature) {
+            event.preventDefault();
 
-        function switchFeature(feature) {
             // Update navigation
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             event.target.classList.add('active');
 
-            // Update form section
+            // Update visible section
             document.querySelectorAll('.feature-section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(feature + '-section').classList.add('active');
 
-            // Update code section
-            document.querySelectorAll('.code-section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById(feature + '-code').classList.remove('hidden');
+            // Scroll to top
+            document.querySelector('main').scrollTop = 0;
 
-            currentFeature = feature;
-            Prism.highlightAll();
-        }
-
-        function switchCodeTab(tab) {
-            // Update tab buttons
-            document.querySelectorAll('.code-tab').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            // Update code examples for current feature
-            document.querySelectorAll('.code-example').forEach(example => {
-                example.classList.add('hidden');
-            });
-            document.getElementById(currentFeature + '-' + tab).classList.remove('hidden');
-
-            currentCodeTab = tab;
+            // Trigger syntax highlighting
             Prism.highlightAll();
         }
 
