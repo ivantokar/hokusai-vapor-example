@@ -38,22 +38,30 @@
     </script>
     <style>
         .nav-item {
-            @apply block px-3 py-2 text-sm cursor-pointer transition-colors;
+            display: block;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 0.375rem;
         }
         .nav-item:hover {
-            @apply bg-secondary;
+            background-color: hsl(210 40% 96.1%);
         }
         .nav-item.active {
-            @apply bg-secondary font-medium;
+            background-color: hsl(210 40% 96.1%);
+            font-weight: 500;
         }
         pre[class*="language-"] {
-            @apply rounded-md text-sm my-0;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            margin: 0;
         }
         .feature-section {
-            @apply hidden;
+            display: none;
         }
         .feature-section.active {
-            @apply block;
+            display: block;
         }
     </style>
 </head>
@@ -390,8 +398,10 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
                 <h3 class="text-sm font-semibold">Result</h3>
             </div>
             <div class="flex-1 overflow-y-auto p-4">
-                <div class="text-center text-muted-foreground text-sm py-12">
-                    <p>Upload and process an image to see the result here</p>
+                <div class="result-content">
+                    <div class="text-center text-muted-foreground text-sm py-12">
+                        <p>Upload and process an image to see the result here</p>
+                    </div>
                 </div>
             </div>
         </aside>
@@ -420,9 +430,55 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
             Prism.highlightAll();
         }
 
+        // Handle form submissions
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const resultPanel = document.querySelector('.result-content');
+
+            // Show loading state
+            resultPanel.innerHTML = '<div class="text-center text-muted-foreground text-sm py-12"><p>Processing...</p></div>';
+
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Request failed: ' + response.statusText);
+                }
+
+                const contentType = response.headers.get('content-type');
+
+                if (contentType && contentType.includes('application/json')) {
+                    // Handle JSON response (metadata)
+                    const data = await response.json();
+                    resultPanel.innerHTML = '<pre class="text-sm bg-secondary p-4 rounded-md overflow-auto">' +
+                        JSON.stringify(data, null, 2) + '</pre>';
+                } else if (contentType && contentType.startsWith('image/')) {
+                    // Handle image response
+                    const blob = await response.blob();
+                    const imageUrl = URL.createObjectURL(blob);
+                    resultPanel.innerHTML = '<img src="' + imageUrl + '" class="max-w-full h-auto rounded-md border border-border" />';
+                } else {
+                    resultPanel.innerHTML = '<div class="text-sm text-muted-foreground">Result received (unknown format)</div>';
+                }
+            } catch (error) {
+                resultPanel.innerHTML = '<div class="text-sm text-red-600 p-4">Error: ' + error.message + '</div>';
+            }
+        }
+
         // Initial syntax highlighting
         document.addEventListener('DOMContentLoaded', function() {
             Prism.highlightAll();
+
+            // Attach form handlers
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', handleFormSubmit);
+            });
         });
     </script>
 </body>
