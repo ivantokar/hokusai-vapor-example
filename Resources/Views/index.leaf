@@ -60,7 +60,7 @@
 <body class="bg-background text-foreground">
     <div class="flex h-screen overflow-hidden">
         <!-- Left Sidebar -->
-        <aside class="w-64 border-r border-border flex flex-col">
+        <aside class="w-64 border-r border-border flex flex-col flex-shrink-0">
             <div class="p-6 border-b border-border">
                 <h1 class="text-xl font-bold">Hokusai</h1>
                 <p class="text-xs text-muted-foreground mt-1">Image Processing</p>
@@ -383,6 +383,18 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
                 </div>
             </div>
         </main>
+
+        <!-- Right Results Panel -->
+        <aside class="w-96 border-l border-border flex flex-col flex-shrink-0 bg-secondary/20">
+            <div class="p-4 border-b border-border">
+                <h3 class="text-sm font-semibold">Result</h3>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4">
+                <div class="text-center text-muted-foreground text-sm py-12">
+                    <p>Upload and process an image to see the result here</p>
+                </div>
+            </div>
+        </aside>
     </div>
 
     <script>
