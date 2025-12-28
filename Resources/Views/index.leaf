@@ -37,85 +37,241 @@
         }
     </script>
     <style>
-        .tab-button {
-            @apply px-3 py-1.5 text-sm font-medium rounded-md transition-colors;
+        .nav-item {
+            @apply px-3 py-2 text-sm rounded-md cursor-pointer transition-colors;
         }
-        .tab-button.active {
-            @apply bg-secondary text-secondary-foreground;
+        .nav-item:hover {
+            @apply bg-secondary;
         }
-        .tab-button:not(.active) {
-            @apply text-muted-foreground hover:text-foreground;
+        .nav-item.active {
+            @apply bg-secondary font-medium;
+        }
+        .code-tab {
+            @apply px-3 py-1.5 text-xs font-medium border-b-2 cursor-pointer transition-colors;
+        }
+        .code-tab.active {
+            @apply border-primary text-foreground;
+        }
+        .code-tab:not(.active) {
+            @apply border-transparent text-muted-foreground hover:text-foreground;
         }
         pre[class*="language-"] {
-            @apply rounded-md text-sm;
+            @apply rounded-md text-xs my-0;
+        }
+        .feature-section {
+            @apply hidden;
+        }
+        .feature-section.active {
+            @apply block;
         }
     </style>
 </head>
 <body class="bg-background text-foreground">
-    <div class="container mx-auto px-4 py-12 max-w-6xl">
-        <!-- Header -->
-        <header class="mb-12">
-            <h1 class="text-4xl font-bold tracking-tight mb-2">Hokusai</h1>
-            <p class="text-lg text-muted-foreground">Hybrid image processing with ImageMagick and libvips</p>
-        </header>
+    <div class="flex h-screen overflow-hidden">
+        <!-- Left Sidebar -->
+        <aside class="w-64 border-r border-border flex flex-col">
+            <div class="p-6 border-b border-border">
+                <h1 class="text-xl font-bold">Hokusai</h1>
+                <p class="text-xs text-muted-foreground mt-1">Image Processing</p>
+            </div>
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <div class="nav-item active" onclick="switchFeature('text')">Text Overlay</div>
+                <div class="nav-item" onclick="switchFeature('resize')">Resize Image</div>
+                <div class="nav-item" onclick="switchFeature('convert')">Convert Format</div>
+                <div class="nav-item" onclick="switchFeature('rotate')">Rotate Image</div>
+                <div class="nav-item" onclick="switchFeature('cert')">Generate Certificate</div>
+                <div class="nav-item" onclick="switchFeature('meta')">Image Metadata</div>
+            </nav>
+            <div class="p-4 border-t border-border text-xs text-muted-foreground">
+                <a href="https://github.com/ivantokar/hokusai" class="hover:text-foreground underline">GitHub</a>
+            </div>
+        </aside>
 
-        <!-- Features Grid -->
-        <div class="space-y-8">
+        <!-- Center Form -->
+        <main class="flex-1 overflow-y-auto p-8">
             <!-- Text Overlay -->
-            <div class="border border-border rounded-lg p-6">
-                <h2 class="text-2xl font-semibold mb-4">Text Overlay</h2>
-                <p class="text-muted-foreground mb-4">Add text with custom fonts, strokes, and effects using ImageMagick</p>
+            <div id="text-section" class="feature-section active">
+                <h2 class="text-2xl font-semibold mb-2">Text Overlay</h2>
+                <p class="text-sm text-muted-foreground mb-6">Add text with custom fonts, strokes, and effects using ImageMagick</p>
 
-                <div class="flex gap-2 mb-4">
-                    <button class="tab-button active" onclick="switchTab('text', 'try')">Try it</button>
-                    <button class="tab-button" onclick="switchTab('text', 'curl')">cURL</button>
-                    <button class="tab-button" onclick="switchTab('text', 'swift')">Swift</button>
-                </div>
-
-                <!-- Try it tab -->
-                <div id="text-try" class="tab-content">
-                    <form action="/demo/text" method="post" enctype="multipart/form-data" class="space-y-4">
+                <form action="/demo/text" method="post" enctype="multipart/form-data" class="space-y-4 max-w-md">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Image</label>
+                        <input type="file" name="image" accept="image/*" required
+                               class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Text</label>
+                        <input type="text" name="text" placeholder="Hello World" required
+                               class="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium mb-1.5">Image</label>
-                            <input type="file" name="image" accept="image/*" required
-                                   class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
+                            <label class="block text-sm font-medium mb-2">Font Size</label>
+                            <input type="number" name="fontSize" value="48"
+                                   class="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-1.5">Text</label>
-                            <input type="text" name="text" placeholder="Hello World" required
-                                   class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring">
+                            <label class="block text-sm font-medium mb-2">Stroke Width</label>
+                            <input type="number" name="strokeWidth" value="2" step="0.1"
+                                   class="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring">
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">Font Size</label>
-                                <input type="number" name="fontSize" value="48"
-                                       class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">Stroke Width</label>
-                                <input type="number" name="strokeWidth" value="2" step="0.1"
-                                       class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring">
-                            </div>
-                        </div>
-                        <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
-                            Process Image
-                        </button>
-                    </form>
-                </div>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                        Process Image
+                    </button>
+                </form>
+            </div>
 
-                <!-- cURL tab -->
-                <div id="text-curl" class="tab-content hidden">
-                    <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/text \
+            <!-- Resize Image -->
+            <div id="resize-section" class="feature-section">
+                <h2 class="text-2xl font-semibold mb-2">Resize Image</h2>
+                <p class="text-sm text-muted-foreground mb-6">High-performance resizing with multiple fit modes using libvips</p>
+
+                <form action="/demo/resize" method="post" enctype="multipart/form-data" class="space-y-4 max-w-md">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Image</label>
+                        <input type="file" name="image" accept="image/*" required
+                               class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Width</label>
+                            <input type="number" name="width" placeholder="800"
+                                   class="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Height</label>
+                            <input type="number" name="height" placeholder="600"
+                                   class="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Fit Mode</label>
+                        <select name="fit" class="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                            <option value="inside">Inside (preserve aspect ratio)</option>
+                            <option value="cover">Cover (crop to fill)</option>
+                            <option value="fill">Fill (stretch to fit)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                        Resize Image
+                    </button>
+                </form>
+            </div>
+
+            <!-- Convert Format -->
+            <div id="convert-section" class="feature-section">
+                <h2 class="text-2xl font-semibold mb-2">Convert Format</h2>
+                <p class="text-sm text-muted-foreground mb-6">Convert between JPEG, PNG, WebP, AVIF, and GIF formats</p>
+
+                <form action="/demo/convert" method="post" enctype="multipart/form-data" class="space-y-4 max-w-md">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Image</label>
+                        <input type="file" name="image" accept="image/*" required
+                               class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Output Format</label>
+                        <select name="format" class="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                            <option value="jpeg">JPEG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WebP</option>
+                            <option value="avif">AVIF</option>
+                            <option value="gif">GIF</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Quality (1-100)</label>
+                        <input type="number" name="quality" value="85" min="1" max="100"
+                               class="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                        Convert Image
+                    </button>
+                </form>
+            </div>
+
+            <!-- Rotate Image -->
+            <div id="rotate-section" class="feature-section">
+                <h2 class="text-2xl font-semibold mb-2">Rotate Image</h2>
+                <p class="text-sm text-muted-foreground mb-6">Fast 90°, 180°, and 270° rotations</p>
+
+                <form action="/demo/rotate" method="post" enctype="multipart/form-data" class="space-y-4 max-w-md">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Image</label>
+                        <input type="file" name="image" accept="image/*" required
+                               class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Rotation</label>
+                        <select name="angle" class="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                            <option value="90">90° clockwise</option>
+                            <option value="180">180°</option>
+                            <option value="270">270° clockwise</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                        Rotate Image
+                    </button>
+                </form>
+            </div>
+
+            <!-- Generate Certificate -->
+            <div id="cert-section" class="feature-section">
+                <h2 class="text-2xl font-semibold mb-2">Generate Certificate</h2>
+                <p class="text-sm text-muted-foreground mb-6">Create personalized certificates with custom fonts</p>
+
+                <form action="/demo/certificate" method="get" class="space-y-4 max-w-md">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Recipient Name</label>
+                        <input type="text" name="name" placeholder="John Doe" required
+                               class="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                        Generate Certificate
+                    </button>
+                </form>
+            </div>
+
+            <!-- Image Metadata -->
+            <div id="meta-section" class="feature-section">
+                <h2 class="text-2xl font-semibold mb-2">Image Metadata</h2>
+                <p class="text-sm text-muted-foreground mb-6">Extract image dimensions, format, and properties</p>
+
+                <form action="/demo/metadata" method="post" enctype="multipart/form-data" class="space-y-4 max-w-md">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Image</label>
+                        <input type="file" name="image" accept="image/*" required
+                               class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                        Get Metadata
+                    </button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Right Code Examples -->
+        <aside class="w-96 border-l border-border flex flex-col bg-secondary/30">
+            <div class="border-b border-border flex">
+                <button class="code-tab active flex-1" onclick="switchCodeTab('curl')">cURL</button>
+                <button class="code-tab flex-1" onclick="switchCodeTab('swift')">Swift</button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4">
+                <!-- Text Overlay Code -->
+                <div id="text-code" class="code-section">
+                    <div id="text-curl" class="code-example">
+                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/text \
   -F "image=@photo.jpg" \
   -F "text=Hello World" \
   -F "fontSize=64" \
   -F "strokeWidth=2" \
   -o output.jpg</code></pre>
-                </div>
-
-                <!-- Swift tab -->
-                <div id="text-swift" class="tab-content hidden">
-                    <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+                    </div>
+                    <div id="text-swift" class="code-example hidden">
+                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
 
 var textOptions = TextOptions()
 textOptions.font = "DejaVu-Sans"
@@ -132,64 +288,21 @@ let result = try image.drawText(
 )
 
 try result.toFile("output.jpg", quality: 90)</code></pre>
-                </div>
-            </div>
-
-            <!-- Resize Image -->
-            <div class="border border-border rounded-lg p-6">
-                <h2 class="text-2xl font-semibold mb-4">Resize Image</h2>
-                <p class="text-muted-foreground mb-4">High-performance resizing with multiple fit modes using libvips</p>
-
-                <div class="flex gap-2 mb-4">
-                    <button class="tab-button active" onclick="switchTab('resize', 'try')">Try it</button>
-                    <button class="tab-button" onclick="switchTab('resize', 'curl')">cURL</button>
-                    <button class="tab-button" onclick="switchTab('resize', 'swift')">Swift</button>
+                    </div>
                 </div>
 
-                <div id="resize-try" class="tab-content">
-                    <form action="/demo/resize" method="post" enctype="multipart/form-data" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Image</label>
-                            <input type="file" name="image" accept="image/*" required
-                                   class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">Width</label>
-                                <input type="number" name="width" placeholder="800"
-                                       class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">Height</label>
-                                <input type="number" name="height" placeholder="600"
-                                       class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Fit Mode</label>
-                            <select name="fit" class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring">
-                                <option value="inside">Inside (preserve aspect ratio)</option>
-                                <option value="cover">Cover (crop to fill)</option>
-                                <option value="fill">Fill (stretch to fit)</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
-                            Resize Image
-                        </button>
-                    </form>
-                </div>
-
-                <div id="resize-curl" class="tab-content hidden">
-                    <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/resize \
+                <!-- Resize Code -->
+                <div id="resize-code" class="code-section hidden">
+                    <div id="resize-curl" class="code-example">
+                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/resize \
   -F "image=@photo.jpg" \
   -F "width=800" \
   -F "height=600" \
   -F "fit=inside" \
   -o resized.jpg</code></pre>
-                </div>
-
-                <div id="resize-swift" class="tab-content hidden">
-                    <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+                    </div>
+                    <div id="resize-swift" class="code-example hidden">
+                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
 
 var options = ResizeOptions()
 options.fit = .inside
@@ -201,142 +314,50 @@ let resized = try image.resize(
 )
 
 try resized.toFile("output.jpg", quality: 85)</code></pre>
-                </div>
-            </div>
-
-            <!-- Convert Format -->
-            <div class="border border-border rounded-lg p-6">
-                <h2 class="text-2xl font-semibold mb-4">Convert Format</h2>
-                <p class="text-muted-foreground mb-4">Convert between JPEG, PNG, WebP, AVIF, and GIF formats</p>
-
-                <div class="flex gap-2 mb-4">
-                    <button class="tab-button active" onclick="switchTab('convert', 'try')">Try it</button>
-                    <button class="tab-button" onclick="switchTab('convert', 'curl')">cURL</button>
-                    <button class="tab-button" onclick="switchTab('convert', 'swift')">Swift</button>
+                    </div>
                 </div>
 
-                <div id="convert-try" class="tab-content">
-                    <form action="/demo/convert" method="post" enctype="multipart/form-data" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Image</label>
-                            <input type="file" name="image" accept="image/*" required
-                                   class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Output Format</label>
-                            <select name="format" class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring">
-                                <option value="jpeg">JPEG</option>
-                                <option value="png">PNG</option>
-                                <option value="webp">WebP</option>
-                                <option value="avif">AVIF</option>
-                                <option value="gif">GIF</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Quality (1-100)</label>
-                            <input type="number" name="quality" value="85" min="1" max="100"
-                                   class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring">
-                        </div>
-                        <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
-                            Convert Image
-                        </button>
-                    </form>
-                </div>
-
-                <div id="convert-curl" class="tab-content hidden">
-                    <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/convert \
+                <!-- Convert Code -->
+                <div id="convert-code" class="code-section hidden">
+                    <div id="convert-curl" class="code-example">
+                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/convert \
   -F "image=@photo.jpg" \
   -F "format=webp" \
   -F "quality=80" \
   -o output.webp</code></pre>
-                </div>
-
-                <div id="convert-swift" class="tab-content hidden">
-                    <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+                    </div>
+                    <div id="convert-swift" class="code-example hidden">
+                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
 
 try image.toFile("output.webp", quality: 80)</code></pre>
-                </div>
-            </div>
-
-            <!-- Rotate Image -->
-            <div class="border border-border rounded-lg p-6">
-                <h2 class="text-2xl font-semibold mb-4">Rotate Image</h2>
-                <p class="text-muted-foreground mb-4">Fast 90°, 180°, and 270° rotations</p>
-
-                <div class="flex gap-2 mb-4">
-                    <button class="tab-button active" onclick="switchTab('rotate', 'try')">Try it</button>
-                    <button class="tab-button" onclick="switchTab('rotate', 'curl')">cURL</button>
-                    <button class="tab-button" onclick="switchTab('rotate', 'swift')">Swift</button>
+                    </div>
                 </div>
 
-                <div id="rotate-try" class="tab-content">
-                    <form action="/demo/rotate" method="post" enctype="multipart/form-data" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Image</label>
-                            <input type="file" name="image" accept="image/*" required
-                                   class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Rotation</label>
-                            <select name="angle" class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring">
-                                <option value="90">90° clockwise</option>
-                                <option value="180">180°</option>
-                                <option value="270">270° clockwise</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
-                            Rotate Image
-                        </button>
-                    </form>
-                </div>
-
-                <div id="rotate-curl" class="tab-content hidden">
-                    <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/rotate \
+                <!-- Rotate Code -->
+                <div id="rotate-code" class="code-section hidden">
+                    <div id="rotate-curl" class="code-example">
+                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/rotate \
   -F "image=@photo.jpg" \
   -F "angle=90" \
   -o rotated.jpg</code></pre>
-                </div>
-
-                <div id="rotate-swift" class="tab-content hidden">
-                    <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+                    </div>
+                    <div id="rotate-swift" class="code-example hidden">
+                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
 
 let rotated = try image.rotate(angle: .degree90)
 
 try rotated.toFile("output.jpg", quality: 85)</code></pre>
-                </div>
-            </div>
-
-            <!-- Generate Certificate -->
-            <div class="border border-border rounded-lg p-6">
-                <h2 class="text-2xl font-semibold mb-4">Generate Certificate</h2>
-                <p class="text-muted-foreground mb-4">Create personalized certificates with custom fonts</p>
-
-                <div class="flex gap-2 mb-4">
-                    <button class="tab-button active" onclick="switchTab('cert', 'try')">Try it</button>
-                    <button class="tab-button" onclick="switchTab('cert', 'curl')">cURL</button>
-                    <button class="tab-button" onclick="switchTab('cert', 'swift')">Swift</button>
+                    </div>
                 </div>
 
-                <div id="cert-try" class="tab-content">
-                    <form action="/demo/certificate" method="get" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Recipient Name</label>
-                            <input type="text" name="name" placeholder="John Doe" required
-                                   class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring">
-                        </div>
-                        <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
-                            Generate Certificate
-                        </button>
-                    </form>
-                </div>
-
-                <div id="cert-curl" class="tab-content hidden">
-                    <pre><code class="language-bash">curl -X GET "http://localhost:8080/demo/certificate?name=John%20Doe" \
+                <!-- Certificate Code -->
+                <div id="cert-code" class="code-section hidden">
+                    <div id="cert-curl" class="code-example">
+                        <pre><code class="language-bash">curl -X GET "http://localhost:8080/demo/certificate?name=John%20Doe" \
   -o certificate.png</code></pre>
-                </div>
-
-                <div id="cert-swift" class="tab-content hidden">
-                    <pre><code class="language-swift">let template = try await Hokusai.image(from: "template.png")
+                    </div>
+                    <div id="cert-swift" class="code-example hidden">
+                        <pre><code class="language-swift">let template = try await Hokusai.image(from: "template.png")
 
 var textOptions = TextOptions()
 textOptions.font = "/path/to/CustomFont.ttf"
@@ -353,40 +374,17 @@ let certificate = try template.drawText(
 )
 
 try certificate.toFile("certificate.png", compression: 9)</code></pre>
-                </div>
-            </div>
-
-            <!-- Image Metadata -->
-            <div class="border border-border rounded-lg p-6">
-                <h2 class="text-2xl font-semibold mb-4">Image Metadata</h2>
-                <p class="text-muted-foreground mb-4">Extract image dimensions, format, and properties</p>
-
-                <div class="flex gap-2 mb-4">
-                    <button class="tab-button active" onclick="switchTab('meta', 'try')">Try it</button>
-                    <button class="tab-button" onclick="switchTab('meta', 'curl')">cURL</button>
-                    <button class="tab-button" onclick="switchTab('meta', 'swift')">Swift</button>
+                    </div>
                 </div>
 
-                <div id="meta-try" class="tab-content">
-                    <form action="/demo/metadata" method="post" enctype="multipart/form-data" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Image</label>
-                            <input type="file" name="image" accept="image/*" required
-                                   class="block w-full text-sm border border-input rounded-md file:border-0 file:bg-secondary file:text-secondary-foreground file:px-4 file:py-2 file:mr-4">
-                        </div>
-                        <button type="submit" class="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
-                            Get Metadata
-                        </button>
-                    </form>
-                </div>
-
-                <div id="meta-curl" class="tab-content hidden">
-                    <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/metadata \
+                <!-- Metadata Code -->
+                <div id="meta-code" class="code-section hidden">
+                    <div id="meta-curl" class="code-example">
+                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/metadata \
   -F "image=@photo.jpg"</code></pre>
-                </div>
-
-                <div id="meta-swift" class="tab-content hidden">
-                    <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+                    </div>
+                    <div id="meta-swift" class="code-example hidden">
+                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
 let metadata = try image.metadata()
 
 print("Width: \(metadata.width)")
@@ -394,42 +392,53 @@ print("Height: \(metadata.height)")
 print("Format: \(metadata.format?.rawValue ?? "unknown")")
 print("Channels: \(metadata.channels)")
 print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Footer -->
-        <footer class="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>Powered by <a href="https://github.com/ivantokar/hokusai" class="underline hover:text-foreground">Hokusai</a> - Hybrid image processing with ImageMagick and libvips</p>
-        </footer>
+        </aside>
     </div>
 
     <script>
-        function switchTab(section, tab) {
-            // Hide all tabs for this section
-            const tabs = ['try', 'curl', 'swift'];
-            tabs.forEach(t => {
-                const el = document.getElementById(`${section}-${t}`);
-                if (el) el.classList.add('hidden');
+        let currentFeature = 'text';
+        let currentCodeTab = 'curl';
+
+        function switchFeature(feature) {
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
             });
-
-            // Show selected tab
-            const selected = document.getElementById(`${section}-${tab}`);
-            if (selected) selected.classList.remove('hidden');
-
-            // Update button states
-            const buttons = document.querySelectorAll(`#${section}-try, #${section}-curl, #${section}-swift`)
-                .forEach(el => {
-                    const parent = el.parentElement;
-                    parent.querySelectorAll('.tab-button').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                });
-
-            // Find and activate the clicked button
             event.target.classList.add('active');
 
-            // Trigger Prism syntax highlighting
+            // Update form section
+            document.querySelectorAll('.feature-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(feature + '-section').classList.add('active');
+
+            // Update code section
+            document.querySelectorAll('.code-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(feature + '-code').classList.remove('hidden');
+
+            currentFeature = feature;
+            Prism.highlightAll();
+        }
+
+        function switchCodeTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.code-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update code examples for current feature
+            document.querySelectorAll('.code-example').forEach(example => {
+                example.classList.add('hidden');
+            });
+            document.getElementById(currentFeature + '-' + tab).classList.remove('hidden');
+
+            currentCodeTab = tab;
             Prism.highlightAll();
         }
 
