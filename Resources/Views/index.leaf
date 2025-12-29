@@ -794,13 +794,19 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
             });
 
             // Toggle inputs based on checkboxes
-            function setupToggle(checkboxId, inputIds) {
+            function setupToggle(checkboxId, inputIds, detailsElement) {
                 const checkbox = document.getElementById(checkboxId);
                 if (!checkbox) return;
 
                 const inputs = inputIds.map(id => document.getElementById(id)).filter(Boolean);
 
                 checkbox.addEventListener('change', function() {
+                    // Toggle details open/closed
+                    if (detailsElement) {
+                        detailsElement.open = this.checked;
+                    }
+
+                    // Enable/disable inputs
                     inputs.forEach(input => {
                         input.disabled = !this.checked;
                         if (!this.checked) {
@@ -811,10 +817,15 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
             }
 
             // Set up toggles for optional sections
-            setupToggle('enableStroke', ['strokeWidth', 'strokeColor', 'strokeOpacity']);
-            setupToggle('enableShadow', ['shadowOffsetX', 'shadowOffsetY', 'shadowColor', 'shadowOpacity']);
-            setupToggle('enableTypography', ['kerning', 'lineSpacing', 'textWidth', 'textHeight']);
-            setupToggle('enableTransform', ['rotation', 'position', 'gravity', 'xCoord', 'yCoord']);
+            const strokeDetails = document.querySelector('#enableStroke').closest('details');
+            const shadowDetails = document.querySelector('#enableShadow').closest('details');
+            const typographyDetails = document.querySelector('#enableTypography').closest('details');
+            const transformDetails = document.querySelector('#enableTransform').closest('details');
+
+            setupToggle('enableStroke', ['strokeWidth', 'strokeColor', 'strokeOpacity'], strokeDetails);
+            setupToggle('enableShadow', ['shadowOffsetX', 'shadowOffsetY', 'shadowColor', 'shadowOpacity'], shadowDetails);
+            setupToggle('enableTypography', ['kerning', 'lineSpacing', 'textWidth', 'textHeight'], typographyDetails);
+            setupToggle('enableTransform', ['rotation', 'position', 'gravity', 'xCoord', 'yCoord'], transformDetails);
         });
     </script>
 </body>
