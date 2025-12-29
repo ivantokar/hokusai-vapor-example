@@ -17,6 +17,8 @@ struct DemoController: RouteCollection {
 
     // Advanced Text Rendering - Showcase ImageMagick capabilities
     func textOverlay(req: Request) async throws -> Response {
+        req.logger.info("Received text overlay request")
+
         // Comprehensive form input covering all ImageMagick text features
         struct FormInput: Content {
             // Required
@@ -62,16 +64,29 @@ struct DemoController: RouteCollection {
             var y: Int?
         }
 
-        let input = try req.content.decode(FormInput.self)
+        let input: FormInput
+        do {
+            input = try req.content.decode(FormInput.self)
+            req.logger.info("Successfully decoded form input")
+        } catch {
+            req.logger.error("Failed to decode form input: \(error)")
+            throw Abort(.badRequest, reason: "Invalid form data: \(error.localizedDescription)")
+        }
 
         // Load image from uploaded file
         guard let data = input.image.data.getData(
             at: input.image.data.readerIndex,
             length: input.image.data.readableBytes
         ) else {
+            req.logger.error("Failed to read image data from uploaded file")
             throw Abort(.badRequest, reason: "Failed to read image data")
         }
+
+        req.logger.info("Loading image, size: \(data.count) bytes")
         let image = try await Hokusai.image(from: data)
+        let imageWidth = try image.width
+        let imageHeight = try image.height
+        req.logger.info("Image loaded successfully: \(imageWidth)x\(imageHeight)")
 
         // Build comprehensive text options
         var textOptions = TextOptions()
@@ -365,12 +380,15 @@ struct DemoController: RouteCollection {
         guard let url = URL(string: fontUrl),
               let scheme = url.scheme?.lowercased(),
               scheme == "https" || scheme == "http" else {
+            req.logger.error("Invalid font URL: \(fontUrl)")
             throw Abort(.badRequest, reason: "Font URL must be http or https")
         }
 
+        req.logger.info("Downloading font from: \(fontUrl)")
         let response = try await req.client.get(URI(string: fontUrl))
         guard response.status == .ok else {
-            throw Abort(.badRequest, reason: "Failed to download font")
+            req.logger.error("Failed to download font, status: \(response.status)")
+            throw Abort(.badRequest, reason: "Failed to download font: \(response.status)")
         }
 
         guard let buffer = response.body,
