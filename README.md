@@ -48,7 +48,7 @@ The demo showcases ImageMagick's comprehensive text rendering capabilities:
 ```bash
 # Basic text overlay with Google Font
 curl -X POST http://localhost:8080/demo/text \
-  -F "useTemplate=true" \
+  -F "image=@TestAssets/certifcate.png" \
   -F "text=John Doe" \
   -F "fontUrl=https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf" \
   -F "fontSize=72" \

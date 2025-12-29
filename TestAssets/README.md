@@ -7,8 +7,8 @@ This directory contains sample images and resources for testing the Hokusai imag
 ### certifcate.png
 - **Size**: 3206 x 2266 pixels
 - **Format**: PNG with alpha channel
-- **Purpose**: Template image for the text drawing demo
-- **Usage**: Used by `/demo/text` with `useTemplate=true` to draw text onto a static template image
+- **Purpose**: Certificate template for text overlay demonstrations
+- **Usage**: Upload to `/demo/text` endpoint to add personalized text (names, dates) to certificates
 
 ### sample-photo.jpg
 - **Size**: 1000 x 800 pixels

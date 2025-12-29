@@ -73,10 +73,10 @@ echo "✓ Saved to /tmp/hokusai-converted.webp"
 ls -lh /tmp/hokusai-converted.webp
 echo ""
 
-# Test 6: Template text
-echo "6. Testing template text..."
+# Test 6: Certificate text with Google Font
+echo "6. Testing certificate text with Google Font..."
 curl -s -X POST "$BASE_URL/demo/text" \
-  -F "useTemplate=true" \
+  -F "image=@TestAssets/certifcate.png" \
   -F "text=Test User" \
   -F "fontUrl=https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf" \
   -F "fontSize=96" \
@@ -84,9 +84,9 @@ curl -s -X POST "$BASE_URL/demo/text" \
   -F "color=0,0,128,255" \
   -F "strokeColor=255,255,255,255" \
   -F "position=center" \
-  -o /tmp/hokusai-template-text.png
-echo "✓ Saved to /tmp/hokusai-template-text.png"
-ls -lh /tmp/hokusai-template-text.png
+  -o /tmp/hokusai-certificate-text.png
+echo "✓ Saved to /tmp/hokusai-certificate-text.png"
+ls -lh /tmp/hokusai-certificate-text.png
 echo ""
 
 echo "================================================"
