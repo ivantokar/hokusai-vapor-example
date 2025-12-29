@@ -1,5 +1,5 @@
 {
-  "originHash" : "9d7dd05cf28d8592d41b3de64caeaeaa9aa6d5c7984108e83fda06ff1fd150f3",
+  "originHash" : "792a9284c832b14295053d065101f66e8629e0ea827943319290bc8af9205d39",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -29,48 +29,21 @@
       }
     },
     {
-      "identity" : "fluent",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/fluent.git",
-      "state" : {
-        "revision" : "2fe9e36daf4bdb5edcf193e0d0806ba2074d2864",
-        "version" : "4.13.0"
-      }
-    },
-    {
-      "identity" : "fluent-kit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/fluent-kit.git",
-      "state" : {
-        "revision" : "0272fdaf7cf6f482c2799026c0695f5fe40e3e8c",
-        "version" : "1.53.0"
-      }
-    },
-    {
-      "identity" : "fluent-postgres-driver",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/fluent-postgres-driver.git",
-      "state" : {
-        "revision" : "59bff45a41d1ece1950bb8a6e0006d88c1fb6e69",
-        "version" : "2.12.0"
-      }
-    },
-    {
       "identity" : "hokusai",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:ivantokar/hokusai.git",
+      "location" : "https://github.com/ivantokar/hokusai.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "08746fca096c9fb7a91d3dd2cd10f8aee562bc2b"
+        "revision" : "cb4c85d6b798f3944b200ff4d94ea0529aa5a7a2",
+        "version" : "0.1.0"
       }
     },
     {
       "identity" : "hokusai-vapor",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:ivantokar/hokusai-vapor.git",
+      "location" : "https://github.com/ivantokar/hokusai-vapor.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "9f9d05200431849a765a73b54215a76cad691191"
+        "revision" : "a21acb4cdabf8eec1c31643eee80fb38b00b20c8",
+        "version" : "0.1.0"
       }
     },
     {
@@ -101,39 +74,12 @@
       }
     },
     {
-      "identity" : "postgres-kit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/postgres-kit.git",
-      "state" : {
-        "revision" : "fe44bbe35a6852730e76891b1fb36c533ecec3f6",
-        "version" : "2.15.0"
-      }
-    },
-    {
-      "identity" : "postgres-nio",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/postgres-nio.git",
-      "state" : {
-        "revision" : "d578b86fb2c8321b114d97cd70831d1a3e9531a6",
-        "version" : "1.30.1"
-      }
-    },
-    {
       "identity" : "routing-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/routing-kit.git",
       "state" : {
         "revision" : "1a10ccea61e4248effd23b6e814999ce7bdf0ee0",
         "version" : "4.9.3"
-      }
-    },
-    {
-      "identity" : "sql-kit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/sql-kit.git",
-      "state" : {
-        "revision" : "c0ea243ffeb8b5ff9e20a281e44003c6abb8896f",
-        "version" : "3.34.0"
       }
     },
     {

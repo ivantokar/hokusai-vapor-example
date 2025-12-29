@@ -1,4 +1,3 @@
-import Fluent
 import Vapor
 import HokusaiVapor
 
@@ -38,8 +37,6 @@ func routes(_ app: Application) throws {
     }
 
     // Register controllers
-    try app.register(collection: TodoController())
-    try app.register(collection: CertificateController())
     try app.register(collection: DemoController())
 }
 

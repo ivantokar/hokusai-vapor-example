@@ -44,6 +44,7 @@ echo "3. Testing text overlay endpoint..."
 curl -s -X POST "$BASE_URL/demo/text" \
   -F "image=@${TEST_IMAGE}" \
   -F "text=Hokusai Test" \
+  -F "fontUrl=https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf" \
   -F "fontSize=48" \
   -F "strokeWidth=2" \
   -o /tmp/hokusai-text.jpg
@@ -72,12 +73,20 @@ echo "✓ Saved to /tmp/hokusai-converted.webp"
 ls -lh /tmp/hokusai-converted.webp
 echo ""
 
-# Test 6: Generate certificate
-echo "6. Testing certificate generation..."
-curl -s -X GET "$BASE_URL/demo/certificate?name=Test%20User" \
-  -o /tmp/hokusai-certificate.png
-echo "✓ Saved to /tmp/hokusai-certificate.png"
-ls -lh /tmp/hokusai-certificate.png
+# Test 6: Template text
+echo "6. Testing template text..."
+curl -s -X POST "$BASE_URL/demo/text" \
+  -F "useTemplate=true" \
+  -F "text=Test User" \
+  -F "fontUrl=https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf" \
+  -F "fontSize=96" \
+  -F "strokeWidth=2" \
+  -F "color=0,0,128,255" \
+  -F "strokeColor=255,255,255,255" \
+  -F "position=center" \
+  -o /tmp/hokusai-template-text.png
+echo "✓ Saved to /tmp/hokusai-template-text.png"
+ls -lh /tmp/hokusai-template-text.png
 echo ""
 
 echo "================================================"
@@ -88,7 +97,7 @@ echo "  - hokusai-resized.jpg      (resized image)"
 echo "  - hokusai-text.jpg         (text overlay)"
 echo "  - hokusai-rotated.jpg      (rotated 90°)"
 echo "  - hokusai-converted.webp   (format conversion)"
-echo "  - hokusai-certificate.png  (generated certificate)"
+echo "  - hokusai-template-text.png  (template text)"
 echo ""
 echo "To view results:"
 echo "  open /tmp/hokusai-*.{jpg,png,webp}"

@@ -1,15 +1,15 @@
+import Foundation
 import Vapor
 import HokusaiVapor
 import Hokusai
 
 struct DemoController: RouteCollection {
-    func boot(routes: RoutesBuilder) throws {
+    func boot(routes: any RoutesBuilder) throws {
         let demo = routes.grouped("demo")
 
         demo.post("text", use: textOverlay)
         demo.post("resize", use: resizeImage)
         demo.post("convert", use: convertFormat)
-        demo.get("certificate", use: generateCertificate)
         demo.post("rotate", use: rotateImage)
         demo.post("metadata", use: getMetadata)
         demo.post("composite", use: compositeImage)
@@ -22,37 +22,70 @@ struct DemoController: RouteCollection {
             var text: String
             var fontSize: Int?
             var strokeWidth: Double?
-            var image: File
+            var image: File?
+            var useTemplate: String?
+            var font: String?
+            var fontUrl: String?
+            var color: String?
+            var strokeColor: String?
+            var kerning: Double?
+            var rotation: Double?
+            var align: String?
+            var lineSpacing: Double?
+            var position: String?
+            var x: Int?
+            var y: Int?
         }
 
         let input = try req.content.decode(FormInput.self)
+        let useTemplate = isTemplateEnabled(input.useTemplate)
 
-        // Convert file to HokusaiImage
-        guard let data = input.image.data.getData(
-            at: input.image.data.readerIndex,
-            length: input.image.data.readableBytes
-        ) else {
-            throw Abort(.badRequest, reason: "Failed to read image data")
-        }
-        let image = try await Hokusai.image(from: data)
+        let image = try await loadBaseImage(
+            req: req,
+            imageFile: input.image,
+            useTemplate: useTemplate
+        )
 
         var textOptions = TextOptions()
-        textOptions.font = "DejaVu-Sans"
-        textOptions.fontSize = input.fontSize ?? 48
-        textOptions.color = [255, 255, 255, 255]  // White
-        textOptions.strokeColor = [0, 0, 0, 255]   // Black outline
-        textOptions.strokeWidth = input.strokeWidth ?? 2.0
-
-        // Center text
-        let x = try image.width / 2
-        let y = try image.height / 2
-
-        let withText = try image.drawText(
-            input.text,
-            x: x,
-            y: y,
-            options: textOptions
+        textOptions.font = try await resolveFontPath(
+            req: req,
+            font: input.font,
+            fontUrl: input.fontUrl
         )
+        textOptions.fontSize = input.fontSize ?? 48
+        textOptions.color = parseRGBA(input.color) ?? [255, 255, 255, 255]
+        textOptions.kerning = input.kerning
+        textOptions.rotation = input.rotation
+        textOptions.lineSpacing = input.lineSpacing
+
+        if let align = TextAlignment(rawValue: (input.align ?? "").lowercased()) {
+            textOptions.align = align
+        }
+
+        if let strokeWidth = input.strokeWidth {
+            textOptions.strokeWidth = strokeWidth
+            textOptions.strokeColor = parseRGBA(input.strokeColor) ?? [0, 0, 0, 255]
+        } else if let strokeColor = parseRGBA(input.strokeColor) {
+            textOptions.strokeColor = strokeColor
+        }
+
+        let withText: HokusaiImage
+        if let position = parsePosition(input.position) {
+            withText = try image.drawText(
+                input.text,
+                position: position,
+                options: textOptions
+            )
+        } else {
+            let x = try input.x ?? (image.width / 2)
+            let y = try input.y ?? (image.height / 2)
+            withText = try image.drawText(
+                input.text,
+                x: x,
+                y: y,
+                options: textOptions
+            )
+        }
 
         return try withText.response(format: "jpeg", quality: 90)
     }
@@ -121,52 +154,6 @@ struct DemoController: RouteCollection {
             format: input.format,
             quality: input.quality ?? 85
         )
-    }
-
-    // Generate Certificate
-    func generateCertificate(req: Request) async throws -> Response {
-        struct Query: Content {
-            let name: String
-        }
-
-        let params = try req.query.decode(Query.self)
-
-        // Determine paths based on environment
-        let certificatePath: String
-        let fontPath: String
-
-        if FileManager.default.fileExists(atPath: "/app/TestAssets/certifcate.png") {
-            // Docker container paths
-            certificatePath = "/app/TestAssets/certifcate.png"
-            fontPath = "DejaVu-Sans"  // System font available in container
-        } else {
-            // Local development paths
-            certificatePath = "TestAssets/certifcate.png"
-            fontPath = "DejaVu-Sans"  // Use system font
-        }
-
-        let cert = try await Hokusai.image(from: certificatePath)
-
-        var textOptions = TextOptions()
-        textOptions.font = fontPath
-        textOptions.fontSize = 96
-        textOptions.color = [0, 0, 128, 255]
-        textOptions.strokeColor = [255, 255, 255, 255]
-        textOptions.strokeWidth = 2.0
-
-        let certWidth = try cert.width
-        let certHeight = try cert.height
-        let textX = certWidth / 2
-        let textY = Int(Double(certHeight) * 0.6)
-
-        let withText = try cert.drawText(
-            params.name,
-            x: textX,
-            y: textY,
-            options: textOptions
-        )
-
-        return try withText.response(format: "png", compression: 9)
     }
 
     // Rotate Image
@@ -239,22 +226,22 @@ struct DemoController: RouteCollection {
 
         let input = try req.content.decode(FormInput.self)
 
-        // Convert base image
         guard let baseData = input.baseImage.data.getData(
             at: input.baseImage.data.readerIndex,
             length: input.baseImage.data.readableBytes
         ) else {
             throw Abort(.badRequest, reason: "Failed to read base image data")
         }
+
         let base = try await Hokusai.image(from: baseData)
 
-        // Convert overlay image
         guard let overlayData = input.overlayImage.data.getData(
             at: input.overlayImage.data.readerIndex,
             length: input.overlayImage.data.readableBytes
         ) else {
             throw Abort(.badRequest, reason: "Failed to read overlay image data")
         }
+
         let overlay = try await Hokusai.image(from: overlayData)
 
         // Parse blend mode
@@ -275,7 +262,6 @@ struct DemoController: RouteCollection {
             options.opacity = opacity
         }
 
-        // Perform composite
         let composited = try base.composite(
             overlay: overlay,
             x: input.x ?? 0,
@@ -283,6 +269,204 @@ struct DemoController: RouteCollection {
             options: options
         )
 
-        return try composited.response(format: "png", quality: 90)
+        return try composited.response(format: "png")
+    }
+
+    // MARK: - Text Helpers
+
+    private func isTemplateEnabled(_ value: String?) -> Bool {
+        guard let value = value?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() else {
+            return false
+        }
+        return value == "true" || value == "1" || value == "on"
+    }
+
+    private func loadBaseImage(
+        req: Request,
+        imageFile: File?,
+        useTemplate: Bool
+    ) async throws -> HokusaiImage {
+        if useTemplate {
+            let templatePath = resolveTemplatePath()
+            return try await Hokusai.image(from: templatePath)
+        }
+
+        guard let imageFile = imageFile else {
+            throw Abort(.badRequest, reason: "Image is required unless useTemplate is set")
+        }
+
+        guard let data = imageFile.data.getData(
+            at: imageFile.data.readerIndex,
+            length: imageFile.data.readableBytes
+        ) else {
+            throw Abort(.badRequest, reason: "Failed to read image data")
+        }
+
+        return try await Hokusai.image(from: data)
+    }
+
+    private func resolveTemplatePath() -> String {
+        if FileManager.default.fileExists(atPath: "/app/TestAssets/certifcate.png") {
+            return "/app/TestAssets/certifcate.png"
+        }
+        return "TestAssets/certifcate.png"
+    }
+
+    private func resolveFontPath(
+        req: Request,
+        font: String?,
+        fontUrl: String?
+    ) async throws -> String {
+        if let fontUrl = fontUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !fontUrl.isEmpty {
+            return try await downloadFont(req: req, fontUrl: fontUrl)
+        }
+
+        if let font = font?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !font.isEmpty {
+            return font
+        }
+
+        if hasSystemFonts() {
+            return "sans"
+        }
+
+        throw Abort(.badRequest, reason: "No system fonts available. Provide font or fontUrl.")
+    }
+
+    private func downloadFont(req: Request, fontUrl: String) async throws -> String {
+        guard let url = URL(string: fontUrl),
+              let scheme = url.scheme?.lowercased(),
+              scheme == "https" || scheme == "http" else {
+            throw Abort(.badRequest, reason: "Font URL must be http or https")
+        }
+
+        let response = try await req.client.get(URI(string: fontUrl))
+        guard response.status == .ok else {
+            throw Abort(.badRequest, reason: "Failed to download font")
+        }
+
+        guard let buffer = response.body,
+              let data = buffer.getData(
+                at: buffer.readerIndex,
+                length: buffer.readableBytes
+              ) else {
+            throw Abort(.badRequest, reason: "Empty font response")
+        }
+
+        let fontsDir = FileManager.default.temporaryDirectory.appendingPathComponent("hokusai-fonts")
+        try FileManager.default.createDirectory(
+            at: fontsDir,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
+
+        let ext = url.pathExtension.isEmpty ? "ttf" : url.pathExtension
+        let filename = "\(UUID().uuidString).\(ext)"
+        let fileUrl = fontsDir.appendingPathComponent(filename)
+
+        try data.write(to: fileUrl)
+        return fileUrl.path
+    }
+
+    private func hasSystemFonts() -> Bool {
+        let searchPaths = [
+            "/usr/share/fonts",
+            "/usr/local/share/fonts",
+            "/Library/Fonts",
+            "/System/Library/Fonts"
+        ]
+
+        for path in searchPaths {
+            guard let enumerator = FileManager.default.enumerator(atPath: path) else {
+                continue
+            }
+
+            for case let item as String in enumerator {
+                let lowercased = item.lowercased()
+                if lowercased.hasSuffix(".ttf") || lowercased.hasSuffix(".otf") {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    private func parsePosition(_ value: String?) -> Position? {
+        switch value?.lowercased() {
+        case "center":
+            return .center
+        case "top":
+            return .top
+        case "bottom":
+            return .bottom
+        case "left":
+            return .left
+        case "right":
+            return .right
+        case "top-left":
+            return .topLeft
+        case "top-right":
+            return .topRight
+        case "bottom-left":
+            return .bottomLeft
+        case "bottom-right":
+            return .bottomRight
+        default:
+            return nil
+        }
+    }
+
+    private func parseRGBA(_ value: String?) -> [Double]? {
+        guard let value = value?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !value.isEmpty else {
+            return nil
+        }
+
+        if value.hasPrefix("#") {
+            let hex = String(value.dropFirst())
+            guard hex.count == 6 || hex.count == 8 else {
+                return nil
+            }
+
+            let chars = Array(hex)
+            func hexByte(_ index: Int) -> Double? {
+                let start = index * 2
+                let end = start + 2
+                guard end <= chars.count else { return nil }
+                let pair = String(chars[start..<end])
+                return Double(Int(pair, radix: 16) ?? 0)
+            }
+
+            guard let r = hexByte(0),
+                  let g = hexByte(1),
+                  let b = hexByte(2) else {
+                return nil
+            }
+
+            let a = hex.count == 8 ? (hexByte(3) ?? 255) : 255
+            return [r, g, b, a]
+        }
+
+        let parts = value.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+        guard parts.count == 3 || parts.count == 4 else {
+            return nil
+        }
+
+        let numbers = parts.compactMap { Double($0) }
+        guard numbers.count == parts.count else {
+            return nil
+        }
+
+        let r = clampColor(numbers[0])
+        let g = clampColor(numbers[1])
+        let b = clampColor(numbers[2])
+        let a = parts.count == 4 ? clampColor(numbers[3]) : 255
+        return [r, g, b, a]
+    }
+
+    private func clampColor(_ value: Double) -> Double {
+        return min(max(value, 0), 255)
     }
 }

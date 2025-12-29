@@ -22,13 +22,10 @@ WORKDIR /build/hokusai-vapor-example
 
 # First just resolve dependencies.
 # This creates a cached layer that can be reused
-# as long as your Package.swift/Package.resolved
-# files do not change.
-COPY hokusai-vapor-example/Package.* ./
-COPY hokusai ../hokusai
-COPY hokusai-vapor ../hokusai-vapor
-RUN swift package resolve \
-        $([ -f ./Package.resolved ] && echo "--force-resolved-versions" || true)
+# as long as your Package.swift file does not change.
+COPY hokusai-vapor-example/Package.swift ./
+COPY hokusai-vapor-example/Package.resolved ./
+RUN swift package resolve
 
 # Copy the Vapor app sources into the build area
 COPY hokusai-vapor-example/. .
@@ -73,17 +70,12 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
       ca-certificates \
       tzdata \
       libvips \
-      libpango-1.0-0 \
-      libpangocairo-1.0-0 \
-      libpangoft2-1.0-0 \
-      fonts-dejavu-core \
       libmagickcore-6.q16-7 \
       libmagickwand-6.q16-7 \
-      fonts-liberation \
       fontconfig \
     && rm -r /var/lib/apt/lists/*
 
-# Copy test assets (certificate template, sample images, watermarks)
+# Copy test assets (template image, sample images, watermarks)
 RUN mkdir -p /app/TestAssets
 COPY hokusai-vapor-example/TestAssets /app/TestAssets
 

@@ -7,8 +7,8 @@ This directory contains sample images and resources for testing the Hokusai imag
 ### certifcate.png
 - **Size**: 3206 x 2266 pixels
 - **Format**: PNG with alpha channel
-- **Purpose**: Template for the certificate generation demo
-- **Usage**: Used by `/demo/certificate` endpoint to generate personalized certificates
+- **Purpose**: Template image for the text drawing demo
+- **Usage**: Used by `/demo/text` with `useTemplate=true` to draw text onto a static template image
 
 ### sample-photo.jpg
 - **Size**: 1000 x 800 pixels
@@ -27,8 +27,8 @@ This directory contains sample images and resources for testing the Hokusai imag
 You can reference these files in your local development:
 
 ```swift
-// Example: Load certificate template
-let cert = try await Hokusai.image(from: "TestAssets/certifcate.png")
+// Example: Load template image
+let templateImage = try await Hokusai.image(from: "TestAssets/certifcate.png")
 
 // Example: Load sample photo
 let photo = try await Hokusai.image(from: "TestAssets/sample-photo.jpg")
