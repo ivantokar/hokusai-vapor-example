@@ -736,8 +736,31 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
             event.preventDefault();
 
             const form = event.target;
-            const formData = new FormData(form);
             const resultPanel = document.querySelector('.result-content');
+
+            // Build clean FormData - only include enabled inputs with values
+            const formData = new FormData();
+            const formElements = form.elements;
+
+            for (let i = 0; i < formElements.length; i++) {
+                const element = formElements[i];
+
+                // Skip disabled inputs, buttons, and unnamed inputs
+                if (element.disabled || !element.name || element.type === 'submit') {
+                    continue;
+                }
+
+                // Handle file inputs
+                if (element.type === 'file') {
+                    if (element.files.length > 0) {
+                        formData.append(element.name, element.files[0]);
+                    }
+                }
+                // Handle other inputs - only add if they have a value
+                else if (element.value && element.value.trim() !== '') {
+                    formData.append(element.name, element.value);
+                }
+            }
 
             // Show loading state
             resultPanel.innerHTML = '<div class="text-center text-slate-500 dark:text-slate-400 text-sm py-12"><p>Processing...</p></div>';
