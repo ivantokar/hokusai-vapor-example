@@ -15,24 +15,52 @@ struct DemoController: RouteCollection {
         demo.post("composite", use: compositeImage)
     }
 
-    // Text Overlay
+    // Advanced Text Rendering - Showcase ImageMagick capabilities
     func textOverlay(req: Request) async throws -> Response {
-        // Decode multipart form data manually
+        // Comprehensive form input covering all ImageMagick text features
         struct FormInput: Content {
+            // Required
             var text: String
-            var fontSize: Int?
-            var strokeWidth: Double?
+
+            // Base image options
             var image: File?
             var useTemplate: String?
+
+            // Font settings
             var font: String?
             var fontUrl: String?
-            var color: String?
+            var fontSize: Int?
+            var dpi: Int?
+
+            // Color settings
+            var color: String?          // Hex (#RRGGBB or #RRGGBBAA) or comma-separated RGBA
+            var opacity: Double?        // 0.0-1.0 (affects text color alpha)
+
+            // Stroke/Outline settings
+            var strokeWidth: Double?
             var strokeColor: String?
+            var strokeOpacity: Double?  // 0.0-1.0
+
+            // Shadow settings
+            var shadowOffsetX: Double?
+            var shadowOffsetY: Double?
+            var shadowColor: String?
+            var shadowOpacity: Double?  // 0.0-1.0
+
+            // Typography settings
             var kerning: Double?
-            var rotation: Double?
-            var align: String?
             var lineSpacing: Double?
-            var position: String?
+            var align: String?          // left, center, right
+            var textWidth: Int?         // Text wrapping width
+            var textHeight: Int?        // Text height limit
+
+            // Transform settings
+            var rotation: Double?       // Degrees
+            var antialiasing: String?   // true/false
+
+            // Position settings
+            var position: String?       // center, top, bottom, etc.
+            var gravity: String?        // ImageMagick gravity
             var x: Int?
             var y: Int?
         }
@@ -46,29 +74,67 @@ struct DemoController: RouteCollection {
             useTemplate: useTemplate
         )
 
+        // Build comprehensive text options
         var textOptions = TextOptions()
+
+        // Font
         textOptions.font = try await resolveFontPath(
             req: req,
             font: input.font,
             fontUrl: input.fontUrl
         )
         textOptions.fontSize = input.fontSize ?? 48
-        textOptions.color = parseRGBA(input.color) ?? [255, 255, 255, 255]
+        textOptions.dpi = input.dpi ?? 72
+
+        // Color with opacity
+        var baseColor = parseRGBA(input.color) ?? [255, 255, 255, 255]
+        if let opacity = input.opacity {
+            baseColor[3] = clampOpacity(opacity) * 255
+        }
+        textOptions.color = baseColor
+
+        // Stroke with opacity
+        if let strokeWidth = input.strokeWidth {
+            textOptions.strokeWidth = strokeWidth
+            var strokeCol = parseRGBA(input.strokeColor) ?? [0, 0, 0, 255]
+            if let strokeOpacity = input.strokeOpacity {
+                strokeCol[3] = clampOpacity(strokeOpacity) * 255
+            }
+            textOptions.strokeColor = strokeCol
+        }
+
+        // Shadow settings
+        if let shadowX = input.shadowOffsetX,
+           let shadowY = input.shadowOffsetY {
+            textOptions.shadowOffset = (x: shadowX, y: shadowY)
+
+            var shadowCol = parseRGBA(input.shadowColor) ?? [0, 0, 0, 128]
+            if let shadowOpacity = input.shadowOpacity {
+                shadowCol[3] = clampOpacity(shadowOpacity) * 255
+            }
+            textOptions.shadowColor = shadowCol
+        }
+
+        // Typography
         textOptions.kerning = input.kerning
-        textOptions.rotation = input.rotation
         textOptions.lineSpacing = input.lineSpacing
+        textOptions.width = input.textWidth
+        textOptions.height = input.textHeight
 
         if let align = TextAlignment(rawValue: (input.align ?? "").lowercased()) {
             textOptions.align = align
         }
 
-        if let strokeWidth = input.strokeWidth {
-            textOptions.strokeWidth = strokeWidth
-            textOptions.strokeColor = parseRGBA(input.strokeColor) ?? [0, 0, 0, 255]
-        } else if let strokeColor = parseRGBA(input.strokeColor) {
-            textOptions.strokeColor = strokeColor
+        // Transform
+        textOptions.rotation = input.rotation
+        textOptions.antialiasing = !(input.antialiasing?.lowercased() == "false")
+
+        // Gravity
+        if let gravity = parseGravity(input.gravity) {
+            textOptions.gravity = gravity
         }
 
+        // Draw text
         let withText: HokusaiImage
         if let position = parsePosition(input.position) {
             withText = try image.drawText(
@@ -87,7 +153,7 @@ struct DemoController: RouteCollection {
             )
         }
 
-        return try withText.response(format: "jpeg", quality: 90)
+        return try withText.response(format: "png")
     }
 
     // Resize Image
@@ -416,6 +482,35 @@ struct DemoController: RouteCollection {
         default:
             return nil
         }
+    }
+
+    private func parseGravity(_ value: String?) -> TextGravity? {
+        switch value?.lowercased() {
+        case "center":
+            return .center
+        case "north":
+            return .north
+        case "south":
+            return .south
+        case "east":
+            return .east
+        case "west":
+            return .west
+        case "northeast", "north-east":
+            return .northEast
+        case "northwest", "north-west":
+            return .northWest
+        case "southeast", "south-east":
+            return .southEast
+        case "southwest", "south-west":
+            return .southWest
+        default:
+            return nil
+        }
+    }
+
+    private func clampOpacity(_ value: Double) -> Double {
+        return min(max(value, 0.0), 1.0)
     }
 
     private func parseRGBA(_ value: String?) -> [Double]? {

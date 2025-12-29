@@ -41,13 +41,52 @@ Open http://localhost:8080
 
 ## Testing Endpoints
 
-Use the included test script:
+### Advanced Text Rendering (ImageMagick)
+
+The demo showcases ImageMagick's comprehensive text rendering capabilities:
 
 ```bash
-./test-demo.sh
+# Basic text overlay with Google Font
+curl -X POST http://localhost:8080/demo/text \
+  -F "useTemplate=true" \
+  -F "text=John Doe" \
+  -F "fontUrl=https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf" \
+  -F "fontSize=72" \
+  -F "color=#2c3e50" \
+  -F "position=center" \
+  -o certificate.png
+
+# Advanced text with stroke, shadow, and effects
+curl -X POST http://localhost:8080/demo/text \
+  -F "image=@TestAssets/sample-photo.jpg" \
+  -F "text=Hello World" \
+  -F "fontSize=64" \
+  -F "fontUrl=https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf" \
+  -F "color=#FFFFFF" \
+  -F "opacity=0.9" \
+  -F "strokeWidth=2" \
+  -F "strokeColor=#000000" \
+  -F "shadowOffsetX=3" \
+  -F "shadowOffsetY=3" \
+  -F "shadowColor=#000000" \
+  -F "shadowOpacity=0.5" \
+  -F "kerning=1.5" \
+  -F "rotation=-5" \
+  -F "position=bottom-right" \
+  -o styled-text.png
 ```
 
-Or test manually with curl:
+**Supported text features:**
+- Custom fonts via Google Fonts URLs or local paths
+- Font size, DPI, alignment (left/center/right)
+- Color with hex (#RRGGBB) or RGBA values
+- Text opacity (0.0-1.0)
+- Stroke/outline with color and opacity
+- Drop shadows with offset, color, and opacity
+- Typography: kerning, line spacing, text wrapping
+- Transform: rotation, gravity, positioning
+
+### Other Endpoints
 
 ```bash
 # Metadata
@@ -59,13 +98,25 @@ curl -X POST http://localhost:8080/demo/resize \
   -F "image=@TestAssets/sample-photo.jpg" \
   -F "width=400" \
   -F "height=300" \
+  -F "fit=inside" \
   -o resized.jpg
 
-# Text overlay
-curl -X POST http://localhost:8080/demo/text \
+# Format conversion
+curl -X POST http://localhost:8080/demo/convert \
   -F "image=@TestAssets/sample-photo.jpg" \
-  -F "text=Hello World" \
-  -o with-text.jpg
+  -F "format=webp" \
+  -F "quality=80" \
+  -o converted.webp
+
+# Composite/Watermark
+curl -X POST http://localhost:8080/demo/composite \
+  -F "baseImage=@TestAssets/sample-photo.jpg" \
+  -F "overlayImage=@TestAssets/logo.png" \
+  -F "x=10" \
+  -F "y=10" \
+  -F "opacity=0.8" \
+  -F "mode=over" \
+  -o watermarked.png
 ```
 
 ## Documentation
