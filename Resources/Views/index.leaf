@@ -103,7 +103,8 @@
                 <a href="#" class="nav-item" onclick="switchFeature(event, 'resize')">Resize Image</a>
                 <a href="#" class="nav-item" onclick="switchFeature(event, 'convert')">Convert Format</a>
                 <a href="#" class="nav-item" onclick="switchFeature(event, 'rotate')">Rotate Image</a>
-                <a href="#" class="nav-item" onclick="switchFeature(event, 'composite')">Watermark/Composite</a>
+                <!-- Composite temporarily disabled due to vips_composite2 bug -->
+                <!-- <a href="#" class="nav-item" onclick="switchFeature(event, 'composite')">Watermark/Composite</a> -->
                 <a href="#" class="nav-item" onclick="switchFeature(event, 'cert')">Generate Certificate</a>
                 <a href="#" class="nav-item" onclick="switchFeature(event, 'meta')">Image Metadata</a>
             </nav>
@@ -336,8 +337,8 @@ try rotated.toFile("output.jpg", quality: 85)</code></pre>
                 </div>
             </div>
 
-            <!-- Watermark/Composite -->
-            <div id="composite-section" class="feature-section max-w-2xl">
+            <!-- Watermark/Composite - DISABLED: vips_composite2 bug causes server crash -->
+            <div id="composite-section" class="feature-section max-w-2xl" style="display: none;">
                 <h2 class="text-2xl font-semibold mb-2">Watermark/Composite</h2>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Overlay images with position, opacity, and blend modes</p>
 
