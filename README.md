@@ -275,6 +275,17 @@ swift build -c release
 swift test
 ```
 
+### Test demo endpoints
+```bash
+# Run automated tests for all demo endpoints
+./test-demo.sh
+
+# Test with a custom image
+./test-demo.sh path/to/your/image.jpg
+```
+
+This will test all endpoints (metadata, resize, text, rotate, convert, certificate) and save results to `/tmp/hokusai-*`.
+
 ### Clean build
 ```bash
 rm -rf .build
