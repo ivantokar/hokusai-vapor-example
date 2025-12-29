@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "VaporVips",
+    name: "HokusaiVaporExample",
     platforms: [
         .macOS(.v13)
     ],
@@ -23,7 +23,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "VaporVips",
+            name: "HokusaiVaporExample",
             dependencies: [
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
@@ -36,9 +36,9 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "VaporVipsTests",
+            name: "HokusaiVaporExampleTests",
             dependencies: [
-                .target(name: "VaporVips"),
+                .target(name: "HokusaiVaporExample"),
                 .product(name: "VaporTesting", package: "vapor"),
             ],
             swiftSettings: swiftSettings

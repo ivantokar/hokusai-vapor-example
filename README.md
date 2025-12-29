@@ -229,7 +229,7 @@ docker buildx build --ssh default .
 hokusai-vapor-example/
 ├── Package.swift
 ├── Sources/
-│   └── VaporVips/
+│   └── HokusaiVaporExample/
 │       ├── entrypoint.swift
 │       ├── configure.swift
 │       ├── routes.swift

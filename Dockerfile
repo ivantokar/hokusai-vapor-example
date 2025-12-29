@@ -18,33 +18,33 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
 RUN ln -s /usr/lib/$(uname -m)-linux-gnu/pkgconfig/MagickWand-6.Q16.pc /usr/lib/$(uname -m)-linux-gnu/pkgconfig/MagickWand.pc || true
 
 # Set up a build area
-WORKDIR /build/vapor-vips
+WORKDIR /build/hokusai-vapor-example
 
 # First just resolve dependencies.
 # This creates a cached layer that can be reused
 # as long as your Package.swift/Package.resolved
 # files do not change.
-COPY vapor-vips/Package.* ./
+COPY hokusai-vapor-example/Package.* ./
 COPY hokusai ../hokusai
 COPY hokusai-vapor ../hokusai-vapor
 RUN swift package resolve \
         $([ -f ./Package.resolved ] && echo "--force-resolved-versions" || true)
 
 # Copy the Vapor app sources into the build area
-COPY vapor-vips/. .
+COPY hokusai-vapor-example/. .
 
 RUN mkdir /staging
 
 # Build the application, with optimizations, with static linking, and using jemalloc
 # N.B.: The static version of jemalloc is incompatible with the static Swift runtime.
-RUN --mount=type=cache,target=/build/vapor-vips/.build \
+RUN --mount=type=cache,target=/build/hokusai-vapor-example/.build \
     set -eux; \
     swift build -c release -v \
-        --product VaporVips \
+        --product HokusaiVaporExample \
         --static-swift-stdlib \
         -Xlinker -ljemalloc; \
     BIN_PATH="$(swift build -c release --show-bin-path)"; \
-    cp "${BIN_PATH}/VaporVips" /staging; \
+    cp "${BIN_PATH}/HokusaiVaporExample" /staging; \
     find -L "${BIN_PATH}" -regex '.*\.resources$' -exec cp -Ra {} /staging \;
 
 
@@ -56,8 +56,8 @@ RUN cp "/usr/libexec/swift/linux/swift-backtrace-static" ./
 
 # Copy any resources from the public directory and views directory if the directories exist
 # Ensure that by default, neither the directory nor any of its contents are writable.
-RUN [ -d /build/vapor-vips/Public ] && { mv /build/vapor-vips/Public ./Public && chmod -R a-w ./Public; } || true
-RUN [ -d /build/vapor-vips/Resources ] && { mv /build/vapor-vips/Resources ./Resources && chmod -R a-w ./Resources; } || true
+RUN [ -d /build/hokusai-vapor-example/Public ] && { mv /build/hokusai-vapor-example/Public ./Public && chmod -R a-w ./Public; } || true
+RUN [ -d /build/hokusai-vapor-example/Resources ] && { mv /build/hokusai-vapor-example/Resources ./Resources && chmod -R a-w ./Resources; } || true
 
 # ================================
 # Run image
@@ -109,5 +109,5 @@ USER vapor:vapor
 EXPOSE 8080
 
 # Start the Vapor service when the image is run, default to listening on 8080 in production environment
-ENTRYPOINT ["./VaporVips"]
+ENTRYPOINT ["./HokusaiVaporExample"]
 CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
