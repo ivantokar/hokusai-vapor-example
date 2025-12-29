@@ -121,18 +121,11 @@
                 <form action="/demo/text" method="post" enctype="multipart/form-data" class="space-y-6 mb-8">
                     <!-- Base Image -->
                     <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/30">
-                        <h3 class="text-sm font-semibold mb-3">Base Image</h3>
-                        <div class="flex items-center gap-2 mb-3">
-                            <input type="checkbox" id="useTemplate" name="useTemplate" value="true"
-                                   class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-900">
-                            <label for="useTemplate" class="text-sm text-slate-600 dark:text-slate-400">
-                                Use certificate template (TestAssets/certifcate.png)
-                            </label>
-                        </div>
+                        <h3 class="text-sm font-semibold mb-3">Base Image *</h3>
                         <div>
-                            <label class="block text-sm font-medium mb-2">Upload Image (optional)</label>
-                            <input type="file" name="image" accept="image/*"
+                            <input type="file" name="image" accept="image/*" required
                                    class="block w-full text-sm border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 file:border-0 file:bg-slate-100 dark:file:bg-slate-800 file:text-slate-900 dark:file:text-slate-50 file:px-4 file:py-2 file:mr-4">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Upload an image to add text overlay</p>
                         </div>
                     </div>
 
@@ -151,19 +144,20 @@
                     <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/30">
                         <h3 class="text-sm font-semibold mb-3">Font Settings</h3>
                         <div class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Font Name/Path</label>
-                                    <input type="text" name="font" placeholder="DejaVu-Sans"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Font URL (Google Fonts)</label>
-                                    <input type="text" name="fontUrl" placeholder="https://fonts.gstatic.com/..."
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
-                                </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Font Family</label>
+                                <select id="fontSelect" name="fontUrl" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <option value="">System Default</option>
+                                    <option value="https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf">Roboto</option>
+                                    <option value="https://fonts.gstatic.com/s/opensans/v34/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0C4n.ttf">Open Sans</option>
+                                    <option value="https://fonts.gstatic.com/s/lato/v23/S6uyw4BMUTPHjx4wXiWtFCc.ttf">Lato</option>
+                                    <option value="https://fonts.gstatic.com/s/montserrat/v25/JTUSjIg1_i6t8kCHKm459Wlhyw.ttf">Montserrat</option>
+                                    <option value="https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf">Playfair Display</option>
+                                    <option value="https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJfecg.ttf">Poppins</option>
+                                    <option value="https://fonts.gstatic.com/s/oswald/v49/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvsUtiZTaR.ttf">Oswald</option>
+                                </select>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Select a Google Font or use system default</p>
                             </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Examples: Roboto → https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf</p>
                             <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Font Size</label>
@@ -205,99 +199,140 @@
                     </div>
 
                     <!-- Stroke / Outline -->
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/30">
-                        <h3 class="text-sm font-semibold mb-3">Stroke / Outline</h3>
-                        <div class="space-y-4">
+                    <details class="border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50/50 dark:bg-slate-900/30">
+                        <summary class="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" id="enableStroke" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-900" onclick="event.stopPropagation()">
+                                    <h3 class="text-sm font-semibold">Stroke / Outline</h3>
+                                </div>
+                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </summary>
+                        <div class="p-4 pt-0 space-y-4">
                             <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Stroke Width</label>
-                                    <input type="number" name="strokeWidth" value="2" step="0.1" min="0"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <input type="number" name="strokeWidth" value="2" step="0.1" min="0" id="strokeWidth"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Stroke Color</label>
-                                    <input type="text" name="strokeColor" placeholder="#000000"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <input type="text" name="strokeColor" placeholder="#000000" id="strokeColor"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Stroke Opacity</label>
-                                    <input type="number" name="strokeOpacity" step="0.1" min="0" max="1" placeholder="1.0"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <input type="number" name="strokeOpacity" step="0.1" min="0" max="1" placeholder="1.0" id="strokeOpacity"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </details>
 
                     <!-- Shadow Effects -->
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/30">
-                        <h3 class="text-sm font-semibold mb-3">Shadow Effects</h3>
-                        <div class="space-y-4">
+                    <details class="border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50/50 dark:bg-slate-900/30">
+                        <summary class="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" id="enableShadow" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-900" onclick="event.stopPropagation()">
+                                    <h3 class="text-sm font-semibold">Shadow Effects</h3>
+                                </div>
+                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </summary>
+                        <div class="p-4 pt-0 space-y-4">
                             <div class="grid grid-cols-4 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Shadow X</label>
-                                    <input type="number" name="shadowOffsetX" step="1" placeholder="3"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <input type="number" name="shadowOffsetX" step="1" placeholder="3" id="shadowOffsetX"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Shadow Y</label>
-                                    <input type="number" name="shadowOffsetY" step="1" placeholder="3"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <input type="number" name="shadowOffsetY" step="1" placeholder="3" id="shadowOffsetY"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Shadow Color</label>
-                                    <input type="text" name="shadowColor" placeholder="#000000"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <input type="text" name="shadowColor" placeholder="#000000" id="shadowColor"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Shadow Opacity</label>
-                                    <input type="number" name="shadowOpacity" step="0.1" min="0" max="1" placeholder="0.5"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <input type="number" name="shadowOpacity" step="0.1" min="0" max="1" placeholder="0.5" id="shadowOpacity"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                 </div>
                             </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Both X and Y offsets required to enable shadow</p>
                         </div>
-                    </div>
+                    </details>
 
                     <!-- Typography -->
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/30">
-                        <h3 class="text-sm font-semibold mb-3">Typography</h3>
-                        <div class="grid grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2">Kerning</label>
-                                <input type="number" name="kerning" step="0.1" placeholder="0"
-                                       class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                    <details class="border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50/50 dark:bg-slate-900/30">
+                        <summary class="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" id="enableTypography" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-900" onclick="event.stopPropagation()">
+                                    <h3 class="text-sm font-semibold">Typography</h3>
+                                </div>
+                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-2">Line Spacing</label>
-                                <input type="number" name="lineSpacing" step="0.1" placeholder="1.0"
-                                       class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-2">Text Width (wrap)</label>
-                                <input type="number" name="textWidth" placeholder="Auto"
-                                       class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-2">Text Height (limit)</label>
-                                <input type="number" name="textHeight" placeholder="Auto"
-                                       class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                        </summary>
+                        <div class="p-4 pt-0">
+                            <div class="grid grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Kerning</label>
+                                    <input type="number" name="kerning" step="0.1" placeholder="0" id="kerning"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Line Spacing</label>
+                                    <input type="number" name="lineSpacing" step="0.1" placeholder="1.0" id="lineSpacing"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Text Width (wrap)</label>
+                                    <input type="number" name="textWidth" placeholder="Auto" id="textWidth"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Text Height (limit)</label>
+                                    <input type="number" name="textHeight" placeholder="Auto" id="textHeight"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </details>
 
                     <!-- Transform & Position -->
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/30">
-                        <h3 class="text-sm font-semibold mb-3">Transform & Position</h3>
-                        <div class="space-y-4">
+                    <details class="border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50/50 dark:bg-slate-900/30">
+                        <summary class="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" id="enableTransform" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-900" onclick="event.stopPropagation()">
+                                    <h3 class="text-sm font-semibold">Transform & Position</h3>
+                                </div>
+                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </summary>
+                        <div class="p-4 pt-0 space-y-4">
                             <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Rotation (degrees)</label>
-                                    <input type="number" name="rotation" step="1" placeholder="0"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <input type="number" name="rotation" step="1" placeholder="0" id="rotation"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Position Preset</label>
-                                    <select name="position" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <select name="position" id="position" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                         <option value="">Custom X/Y</option>
                                         <option value="center">Center</option>
                                         <option value="top">Top</option>
@@ -310,7 +345,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Gravity</label>
-                                    <select name="gravity" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <select name="gravity" id="gravity" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                         <option value="">None</option>
                                         <option value="center">Center</option>
                                         <option value="north">North</option>
@@ -327,90 +362,22 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium mb-2">X Coordinate</label>
-                                    <input type="number" name="x" placeholder="Auto (center)"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <input type="number" name="x" placeholder="Auto (center)" id="xCoord"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Y Coordinate</label>
-                                    <input type="number" name="y" placeholder="Auto (center)"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <input type="number" name="y" placeholder="Auto (center)" id="yCoord"
+                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </details>
 
                     <button type="submit" class="w-full bg-slate-900 dark:bg-slate-50 text-slate-50 dark:text-slate-900 px-4 py-2.5 rounded-md text-sm font-medium hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
                         Generate Image with Text
                     </button>
                 </form>
-
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-slate-500 dark:text-slate-400">Example: Certificate with Google Font</h3>
-                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/text \
-  -F "useTemplate=true" \
-  -F "text=John Doe" \
-  -F "fontUrl=https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf" \
-  -F "fontSize=72" \
-  -F "color=#2c3e50" \
-  -F "strokeWidth=1.5" \
-  -F "strokeColor=#ecf0f1" \
-  -F "shadowOffsetX=3" \
-  -F "shadowOffsetY=3" \
-  -F "shadowColor=#000000" \
-  -F "shadowOpacity=0.3" \
-  -F "position=center" \
-  -o certificate.png</code></pre>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-slate-500 dark:text-slate-400">Swift: Full Feature Example</h3>
-                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "template.png")
-
-var textOptions = TextOptions()
-// Font
-textOptions.font = "Playfair Display"
-textOptions.fontSize = 72
-textOptions.dpi = 150
-
-// Color & Opacity
-textOptions.color = [44, 62, 80, 255]  // Dark blue
-
-// Stroke
-textOptions.strokeWidth = 1.5
-textOptions.strokeColor = [236, 240, 241, 255]  // Light gray
-
-// Shadow
-textOptions.shadowOffset = (x: 3, y: 3)
-textOptions.shadowColor = [0, 0, 0, 77]  // 30% opacity black
-textOptions.shadowOpacity = 0.3
-
-// Typography
-textOptions.kerning = 1.5
-textOptions.lineSpacing = 1.2
-textOptions.align = .center
-
-// Transform
-textOptions.rotation = -3  // Slight tilt
-textOptions.gravity = .center
-
-let result = try image.drawText(
-    "Certificate of Achievement",
-    position: .center,
-    options: textOptions
-)
-
-try result.toFile("certificate.png")</code></pre>
-                    </div>
-                    <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-md">
-                        <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">Google Fonts URLs</h4>
-                        <p class="text-xs text-blue-700 dark:text-blue-300 mb-2">Browse fonts at <a href="https://fonts.google.com/" class="underline" target="_blank">fonts.google.com</a>, then inspect the CSS URL to find the .ttf link.</p>
-                        <ul class="text-xs text-blue-700 dark:text-blue-300 space-y-1 font-mono">
-                            <li>• Roboto: https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf</li>
-                            <li>• Open Sans: https://fonts.gstatic.com/s/opensans/v34/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0C4n.ttf</li>
-                            <li>• Playfair: https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf</li>
-                        </ul>
-                    </div>
-                </div>
             </div>
 
             <!-- Resize Image -->
@@ -819,6 +786,29 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
             document.querySelectorAll('form').forEach(form => {
                 form.addEventListener('submit', handleFormSubmit);
             });
+
+            // Toggle inputs based on checkboxes
+            function setupToggle(checkboxId, inputIds) {
+                const checkbox = document.getElementById(checkboxId);
+                if (!checkbox) return;
+
+                const inputs = inputIds.map(id => document.getElementById(id)).filter(Boolean);
+
+                checkbox.addEventListener('change', function() {
+                    inputs.forEach(input => {
+                        input.disabled = !this.checked;
+                        if (!this.checked) {
+                            input.value = '';
+                        }
+                    });
+                });
+            }
+
+            // Set up toggles for optional sections
+            setupToggle('enableStroke', ['strokeWidth', 'strokeColor', 'strokeOpacity']);
+            setupToggle('enableShadow', ['shadowOffsetX', 'shadowOffsetY', 'shadowColor', 'shadowOpacity']);
+            setupToggle('enableTypography', ['kerning', 'lineSpacing', 'textWidth', 'textHeight']);
+            setupToggle('enableTransform', ['rotation', 'position', 'gravity', 'xCoord', 'yCoord']);
         });
     </script>
 </body>
