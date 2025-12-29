@@ -78,6 +78,12 @@
         .feature-section.active {
             display: block;
         }
+        details summary {
+            list-style: none;
+        }
+        details summary::-webkit-details-marker {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50">
