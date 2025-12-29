@@ -21,10 +21,7 @@ struct DemoController: RouteCollection {
         struct FormInput: Content {
             // Required
             var text: String
-
-            // Base image options
-            var image: File?
-            var useTemplate: String?
+            var image: File
 
             // Font settings
             var font: String?
@@ -66,13 +63,15 @@ struct DemoController: RouteCollection {
         }
 
         let input = try req.content.decode(FormInput.self)
-        let useTemplate = isTemplateEnabled(input.useTemplate)
 
-        let image = try await loadBaseImage(
-            req: req,
-            imageFile: input.image,
-            useTemplate: useTemplate
-        )
+        // Load image from uploaded file
+        guard let data = input.image.data.getData(
+            at: input.image.data.readerIndex,
+            length: input.image.data.readableBytes
+        ) else {
+            throw Abort(.badRequest, reason: "Failed to read image data")
+        }
+        let image = try await Hokusai.image(from: data)
 
         // Build comprehensive text options
         var textOptions = TextOptions()
@@ -339,44 +338,6 @@ struct DemoController: RouteCollection {
     }
 
     // MARK: - Text Helpers
-
-    private func isTemplateEnabled(_ value: String?) -> Bool {
-        guard let value = value?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() else {
-            return false
-        }
-        return value == "true" || value == "1" || value == "on"
-    }
-
-    private func loadBaseImage(
-        req: Request,
-        imageFile: File?,
-        useTemplate: Bool
-    ) async throws -> HokusaiImage {
-        if useTemplate {
-            let templatePath = resolveTemplatePath()
-            return try await Hokusai.image(from: templatePath)
-        }
-
-        guard let imageFile = imageFile else {
-            throw Abort(.badRequest, reason: "Image is required unless useTemplate is set")
-        }
-
-        guard let data = imageFile.data.getData(
-            at: imageFile.data.readerIndex,
-            length: imageFile.data.readableBytes
-        ) else {
-            throw Abort(.badRequest, reason: "Failed to read image data")
-        }
-
-        return try await Hokusai.image(from: data)
-    }
-
-    private func resolveTemplatePath() -> String {
-        if FileManager.default.fileExists(atPath: "/app/TestAssets/certifcate.png") {
-            return "/app/TestAssets/certifcate.png"
-        }
-        return "TestAssets/certifcate.png"
-    }
 
     private func resolveFontPath(
         req: Request,
