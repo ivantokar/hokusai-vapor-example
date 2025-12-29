@@ -56,8 +56,8 @@ RUN cp "/usr/libexec/swift/linux/swift-backtrace-static" ./
 
 # Copy any resources from the public directory and views directory if the directories exist
 # Ensure that by default, neither the directory nor any of its contents are writable.
-RUN [ -d /build/Public ] && { mv /build/Public ./Public && chmod -R a-w ./Public; } || true
-RUN [ -d /build/Resources ] && { mv /build/Resources ./Resources && chmod -R a-w ./Resources; } || true
+RUN [ -d /build/vapor-vips/Public ] && { mv /build/vapor-vips/Public ./Public && chmod -R a-w ./Public; } || true
+RUN [ -d /build/vapor-vips/Resources ] && { mv /build/vapor-vips/Resources ./Resources && chmod -R a-w ./Resources; } || true
 
 # ================================
 # Run image
@@ -83,13 +83,9 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
       fontconfig \
     && rm -r /var/lib/apt/lists/*
 
-# Copy and install Passero_One font
-COPY tmp/Passero_One /usr/share/fonts/custom/
-RUN fc-cache -f -v
-
-# Copy certificate template
-RUN mkdir -p /app/tmp
-COPY tmp/certifcate.png /app/tmp/certifcate.png
+# Copy test assets (certificate template, sample images, watermarks)
+RUN mkdir -p /app/TestAssets
+COPY hokusai-vapor-example/TestAssets /app/TestAssets
 
 # If your app or its dependencies import FoundationNetworking, also install `libcurl4`.
 # If your app or its dependencies import FoundationXML, also install `libxml2`.

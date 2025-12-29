@@ -12,6 +12,7 @@ struct DemoController: RouteCollection {
         demo.get("certificate", use: generateCertificate)
         demo.post("rotate", use: rotateImage)
         demo.post("metadata", use: getMetadata)
+        demo.post("composite", use: compositeImage)
     }
 
     // Text Overlay
@@ -134,14 +135,14 @@ struct DemoController: RouteCollection {
         let certificatePath: String
         let fontPath: String
 
-        if FileManager.default.fileExists(atPath: "/app/tmp/certifcate.png") {
+        if FileManager.default.fileExists(atPath: "/app/TestAssets/certifcate.png") {
             // Docker container paths
-            certificatePath = "/app/tmp/certifcate.png"
-            fontPath = "PasseroOne-Regular"
+            certificatePath = "/app/TestAssets/certifcate.png"
+            fontPath = "DejaVu-Sans"  // System font available in container
         } else {
             // Local development paths
-            certificatePath = "/Users/ivantokar/Work/vips/tmp/certifcate.png"
-            fontPath = "/Users/ivantokar/Work/vips/tmp/Passero_One/PasseroOne-Regular.ttf"
+            certificatePath = "TestAssets/certifcate.png"
+            fontPath = "DejaVu-Sans"  // Use system font
         }
 
         let cert = try await Hokusai.image(from: certificatePath)
@@ -223,5 +224,65 @@ struct DemoController: RouteCollection {
         )
 
         return try await response.encodeResponse(for: req)
+    }
+
+    // Composite/Watermark
+    func compositeImage(req: Request) async throws -> Response {
+        struct FormInput: Content {
+            var x: Int?
+            var y: Int?
+            var opacity: Double?
+            var mode: String?
+            var baseImage: File
+            var overlayImage: File
+        }
+
+        let input = try req.content.decode(FormInput.self)
+
+        // Convert base image
+        guard let baseData = input.baseImage.data.getData(
+            at: input.baseImage.data.readerIndex,
+            length: input.baseImage.data.readableBytes
+        ) else {
+            throw Abort(.badRequest, reason: "Failed to read base image data")
+        }
+        let base = try await Hokusai.image(from: baseData)
+
+        // Convert overlay image
+        guard let overlayData = input.overlayImage.data.getData(
+            at: input.overlayImage.data.readerIndex,
+            length: input.overlayImage.data.readableBytes
+        ) else {
+            throw Abort(.badRequest, reason: "Failed to read overlay image data")
+        }
+        let overlay = try await Hokusai.image(from: overlayData)
+
+        // Parse blend mode
+        let blendMode: BlendMode
+        switch input.mode {
+        case "add":
+            blendMode = .add
+        case "multiply":
+            blendMode = .multiply
+        default:
+            blendMode = .over
+        }
+
+        // Create composite options
+        var options = CompositeOptions()
+        options.mode = blendMode
+        if let opacity = input.opacity {
+            options.opacity = opacity
+        }
+
+        // Perform composite
+        let composited = try base.composite(
+            overlay: overlay,
+            x: input.x ?? 0,
+            y: input.y ?? 0,
+            options: options
+        )
+
+        return try composited.response(format: "png", quality: 90)
     }
 }

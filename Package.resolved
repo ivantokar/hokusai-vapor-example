@@ -61,7 +61,7 @@
       "location" : "git@github.com:ivantokar/hokusai.git",
       "state" : {
         "branch" : "main",
-        "revision" : "3c56b9759ee48d02ea943e21ed808c65ef93a4ce"
+        "revision" : "08746fca096c9fb7a91d3dd2cd10f8aee562bc2b"
       }
     },
     {
@@ -70,7 +70,7 @@
       "location" : "git@github.com:ivantokar/hokusai-vapor.git",
       "state" : {
         "branch" : "main",
-        "revision" : "3975a50f2d0e9417d7f4fed53aeab94a5b172524"
+        "revision" : "9f9d05200431849a765a73b54215a76cad691191"
       }
     },
     {

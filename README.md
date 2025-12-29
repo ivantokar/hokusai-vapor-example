@@ -13,9 +13,11 @@ A complete Vapor application demonstrating the [Hokusai](https://github.com/ivan
 - 📐 **Resize** - Multiple fit modes (fill, contain, cover)
 - 🔄 **Format Conversion** - Convert between JPEG, PNG, WebP, AVIF, GIF
 - ↻ **Rotate** - 90°, 180°, 270° rotations
+- 🖼️ **Watermark/Composite** - Overlay images with blend modes (experimental)
 - ℹ️ **Metadata** - Extract image information
-- 🏆 **Certificate Generator** - Generate certificates with custom fonts
+- 🏆 **Certificate Generator** - Generate personalized certificates
 - 🐳 **Docker Ready** - Full Docker deployment support
+- 📦 **Test Assets Included** - Sample images ready for testing
 
 ## Quick Start
 
@@ -35,16 +37,19 @@ sudo apt install libvips-dev libmagick++-dev libmagickwand-dev pkg-config
 ### Run Locally
 
 ```bash
-# Build and run
-PKG_CONFIG_PATH=/opt/homebrew/lib/pkgconfig swift run
+# Clone the repository
+git clone <repository-url>
+cd hokusai-vapor-example
 
-# Or just
+# Build and run
 swift run
 
 # Open browser to http://localhost:8080
 ```
 
 The web UI provides interactive forms for testing all features!
+
+**Note:** Test assets (sample images, certificate template, watermark) are included in the `TestAssets/` directory and ready to use.
 
 ### Run with Docker
 
@@ -234,9 +239,24 @@ hokusai-vapor-example/
 ├── Resources/
 │   └── Views/
 │       └── index.leaf                        # Web UI template
+├── TestAssets/                                # Test images and resources
+│   ├── README.md                              # Documentation for test assets
+│   ├── certifcate.png                         # Certificate template
+│   ├── sample-photo.jpg                       # General test image
+│   └── watermark.png                          # Watermark for composite tests
 ├── Dockerfile
 └── docker-compose.yml
 ```
+
+### Test Assets
+
+The `TestAssets/` directory contains sample images for testing:
+
+- **certifcate.png** - Certificate template (3206x2266 PNG)
+- **sample-photo.jpg** - General purpose test image (1000x800 JPEG)
+- **watermark.png** - Sample watermark (200x50 PNG with alpha)
+
+These files are ready to use out of the box. See `TestAssets/README.md` for details.
 
 ## Development
 
