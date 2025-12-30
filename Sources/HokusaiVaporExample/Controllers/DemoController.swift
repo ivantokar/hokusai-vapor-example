@@ -29,6 +29,7 @@ struct DemoController: RouteCollection {
             var font: String?
             var fontUrl: String?
             var fontSize: Int?
+            var fontWeight: Int?
             var dpi: Int?
 
             // Color settings
@@ -98,6 +99,7 @@ struct DemoController: RouteCollection {
             fontUrl: input.fontUrl
         )
         textOptions.fontSize = input.fontSize ?? 48
+        // Note: fontWeight parameter is accepted but not yet supported by Hokusai library
         textOptions.dpi = input.dpi ?? 72
 
         // Color with opacity

@@ -21,15 +21,24 @@ sudo apt install libvips-dev libmagick++-dev libmagickwand-dev pkg-config
 swift run HokusaiVaporExample
 ```
 
-Open http://localhost:8080
+Open http://localhost:8081
 
 ## Run with Docker
 
 ```bash
+# Build the image
+docker compose build
+
+# Start the application
 docker compose up app
+
+# Or combine both steps
+docker compose up --build app
 ```
 
-Open http://localhost:8080
+Open http://localhost:8081
+
+**Note:** The first build may take several minutes as it downloads and compiles dependencies.
 
 ## What's Included
 
@@ -47,7 +56,7 @@ The demo showcases ImageMagick's comprehensive text rendering capabilities:
 
 ```bash
 # Basic text overlay with Google Font
-curl -X POST http://localhost:8080/demo/text \
+curl -X POST http://localhost:8081/demo/text \
   -F "image=@TestAssets/certifcate.png" \
   -F "text=John Doe" \
   -F "fontUrl=https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf" \
@@ -57,7 +66,7 @@ curl -X POST http://localhost:8080/demo/text \
   -o certificate.png
 
 # Advanced text with stroke, shadow, and effects
-curl -X POST http://localhost:8080/demo/text \
+curl -X POST http://localhost:8081/demo/text \
   -F "image=@TestAssets/sample-photo.jpg" \
   -F "text=Hello World" \
   -F "fontSize=64" \
@@ -90,11 +99,11 @@ curl -X POST http://localhost:8080/demo/text \
 
 ```bash
 # Metadata
-curl -X POST http://localhost:8080/demo/metadata \
+curl -X POST http://localhost:8081/demo/metadata \
   -F "image=@TestAssets/sample-photo.jpg" | jq
 
 # Resize
-curl -X POST http://localhost:8080/demo/resize \
+curl -X POST http://localhost:8081/demo/resize \
   -F "image=@TestAssets/sample-photo.jpg" \
   -F "width=400" \
   -F "height=300" \
@@ -102,14 +111,14 @@ curl -X POST http://localhost:8080/demo/resize \
   -o resized.jpg
 
 # Format conversion
-curl -X POST http://localhost:8080/demo/convert \
+curl -X POST http://localhost:8081/demo/convert \
   -F "image=@TestAssets/sample-photo.jpg" \
   -F "format=webp" \
   -F "quality=80" \
   -o converted.webp
 
 # Composite/Watermark
-curl -X POST http://localhost:8080/demo/composite \
+curl -X POST http://localhost:8081/demo/composite \
   -F "baseImage=@TestAssets/sample-photo.jpg" \
   -F "overlayImage=@TestAssets/logo.png" \
   -F "x=10" \

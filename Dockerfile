@@ -18,23 +18,17 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
 RUN ln -s /usr/lib/$(uname -m)-linux-gnu/pkgconfig/MagickWand-6.Q16.pc /usr/lib/$(uname -m)-linux-gnu/pkgconfig/MagickWand.pc || true
 
 # Set up a build area
-WORKDIR /build/hokusai-vapor-example
+WORKDIR /build
 
-# First just resolve dependencies.
-# This creates a cached layer that can be reused
-# as long as your Package.swift file does not change.
-COPY hokusai-vapor-example/Package.swift ./
-COPY hokusai-vapor-example/Package.resolved ./
+# Copy the Vapor app sources and resolve dependencies
+COPY . .
 RUN swift package resolve
-
-# Copy the Vapor app sources into the build area
-COPY hokusai-vapor-example/. .
 
 RUN mkdir /staging
 
 # Build the application, with optimizations, with static linking, and using jemalloc
 # N.B.: The static version of jemalloc is incompatible with the static Swift runtime.
-RUN --mount=type=cache,target=/build/hokusai-vapor-example/.build \
+RUN --mount=type=cache,target=/build/.build \
     set -eux; \
     swift build -c release -v \
         --product HokusaiVaporExample \
@@ -53,8 +47,8 @@ RUN cp "/usr/libexec/swift/linux/swift-backtrace-static" ./
 
 # Copy any resources from the public directory and views directory if the directories exist
 # Ensure that by default, neither the directory nor any of its contents are writable.
-RUN [ -d /build/hokusai-vapor-example/Public ] && { mv /build/hokusai-vapor-example/Public ./Public && chmod -R a-w ./Public; } || true
-RUN [ -d /build/hokusai-vapor-example/Resources ] && { mv /build/hokusai-vapor-example/Resources ./Resources && chmod -R a-w ./Resources; } || true
+RUN [ -d /build/Public ] && { mv /build/Public ./Public && chmod -R a-w ./Public; } || true
+RUN [ -d /build/Resources ] && { mv /build/Resources ./Resources && chmod -R a-w ./Resources; } || true
 
 # ================================
 # Run image
@@ -77,7 +71,7 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
 
 # Copy test assets (template image, sample images, watermarks)
 RUN mkdir -p /app/TestAssets
-COPY hokusai-vapor-example/TestAssets /app/TestAssets
+COPY TestAssets /app/TestAssets
 
 # If your app or its dependencies import FoundationNetworking, also install `libcurl4`.
 # If your app or its dependencies import FoundationXML, also install `libxml2`.
@@ -97,9 +91,9 @@ ENV SWIFT_BACKTRACE=enable=yes,sanitize=yes,threads=all,images=all,interactive=n
 # Ensure all further commands run as the vapor user
 USER vapor:vapor
 
-# Let Docker bind to port 8080
-EXPOSE 8080
+# Let Docker bind to port 8081
+EXPOSE 8081
 
-# Start the Vapor service when the image is run, default to listening on 8080 in production environment
+# Start the Vapor service when the image is run, default to listening on 8081 in production environment
 ENTRYPOINT ["./HokusaiVaporExample"]
-CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
+CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8081"]

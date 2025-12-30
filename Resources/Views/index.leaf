@@ -10,11 +10,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" media="(prefers-color-scheme: light)">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" media="(prefers-color-scheme: dark)">
+    <!-- Google Fonts with multiple weights -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         .dark pre[class*="language-"],
         .dark code[class*="language-"] {
-            background: #1e293b !important;
-            color: #e2e8f0 !important;
+            background: #1a1a1a !important;
+            color: #e5e5e5 !important;
         }
     </style>
     <script>
@@ -23,23 +27,50 @@
             theme: {
                 extend: {
                     colors: {
-                        border: "hsl(214.3 31.8% 91.4%)",
-                        input: "hsl(214.3 31.8% 91.4%)",
-                        ring: "hsl(222.2 84% 4.9%)",
-                        background: "hsl(0 0% 100%)",
-                        foreground: "hsl(222.2 84% 4.9%)",
+                        border: {
+                            DEFAULT: "hsl(0 0% 90%)",
+                            dark: "hsl(0 0% 20%)"
+                        },
+                        input: {
+                            DEFAULT: "hsl(0 0% 90%)",
+                            dark: "hsl(0 0% 20%)"
+                        },
+                        ring: {
+                            DEFAULT: "hsl(0 0% 0%)",
+                            dark: "hsl(0 0% 100%)"
+                        },
+                        background: {
+                            DEFAULT: "hsl(0 0% 100%)",
+                            dark: "hsl(0 0% 0%)"
+                        },
+                        foreground: {
+                            DEFAULT: "hsl(0 0% 0%)",
+                            dark: "hsl(0 0% 100%)"
+                        },
                         primary: {
-                            DEFAULT: "hsl(222.2 47.4% 11.2%)",
-                            foreground: "hsl(210 40% 98%)",
+                            DEFAULT: "hsl(0 0% 10%)",
+                            foreground: "hsl(0 0% 98%)",
+                            dark: "hsl(0 0% 95%)",
+                            "dark-foreground": "hsl(0 0% 10%)"
                         },
                         secondary: {
-                            DEFAULT: "hsl(210 40% 96.1%)",
-                            foreground: "hsl(222.2 47.4% 11.2%)",
+                            DEFAULT: "hsl(0 0% 96%)",
+                            foreground: "hsl(0 0% 10%)",
+                            dark: "hsl(0 0% 18%)",
+                            "dark-foreground": "hsl(0 0% 95%)"
                         },
                         muted: {
-                            DEFAULT: "hsl(210 40% 96.1%)",
-                            foreground: "hsl(215.4 16.3% 46.9%)",
+                            DEFAULT: "hsl(0 0% 96%)",
+                            foreground: "hsl(0 0% 45%)",
+                            dark: "hsl(0 0% 18%)",
+                            "dark-foreground": "hsl(0 0% 65%)"
                         },
+                        accent: {
+                            DEFAULT: "hsl(0 0% 95%)",
+                            foreground: "hsl(0 0% 10%)",
+                            dark: "hsl(0 0% 20%)",
+                            "dark-foreground": "hsl(0 0% 95%)"
+                        }
                     },
                 }
             }
@@ -51,51 +82,319 @@
             padding: 0.5rem 0.75rem;
             font-size: 0.875rem;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s ease-in-out;
             border-radius: 0.375rem;
         }
         .nav-item:hover {
-            background-color: hsl(210 40% 96.1%);
+            background-color: hsl(0 0% 96%);
         }
         .dark .nav-item:hover {
-            background-color: hsl(217.2 32.6% 17.5%);
+            background-color: hsl(0 0% 18%);
         }
         .nav-item.active {
-            background-color: hsl(210 40% 96.1%);
+            background-color: hsl(0 0% 94%);
             font-weight: 500;
         }
         .dark .nav-item.active {
-            background-color: hsl(217.2 32.6% 17.5%);
+            background-color: hsl(0 0% 22%);
         }
-        pre[class*="language-"] {
-            border-radius: 0.375rem;
+        /* Gruvbox Hard Dark theme for code blocks */
+        .code-block-wrapper {
+            position: relative;
+            margin: 0.5rem 0;
+        }
+        pre[class*="language-"],
+        code[class*="language-"] {
+            background: #1d2021;
+            color: #ebdbb2;
+            border-radius: 0.5rem;
             font-size: 0.875rem;
             margin: 0;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'SF Mono', Monaco, Consolas, monospace;
+            line-height: 1.6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .dark pre[class*="language-"],
+        .dark code[class*="language-"] {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        pre[class*="language-"] code {
+            background: transparent;
+            padding: 0;
+        }
+        .copy-button {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            padding: 0.375rem 0.75rem;
+            background: #3c3836;
+            color: #ebdbb2;
+            border: 1px solid #504945;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        .code-block-wrapper:hover .copy-button {
+            opacity: 1;
+        }
+        .copy-button:hover {
+            background: #504945;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        .copy-button:active {
+            transform: translateY(0);
+        }
+        .copy-button.copied {
+            background: #b8bb26;
+            color: #1d2021;
+            border-color: #b8bb26;
+        }
+        /* Gruvbox Hard Dark syntax highlighting */
+        .language-bash .token.comment,
+        .language-swift .token.comment {
+            color: #928374;
+            font-style: italic;
+        }
+        .language-bash .token.string,
+        .language-swift .token.string {
+            color: #b8bb26;
+        }
+        .language-bash .token.keyword,
+        .language-bash .token.builtin,
+        .language-swift .token.keyword {
+            color: #fe8019;
+            font-weight: 600;
+        }
+        .language-swift .token.function {
+            color: #fabd2f;
+        }
+        .language-swift .token.class-name,
+        .language-swift .token.type {
+            color: #fabd2f;
+        }
+        .language-bash .token.variable,
+        .language-bash .token.parameter {
+            color: #8ec07c;
+        }
+        .language-swift .token.number,
+        .language-bash .token.number {
+            color: #d3869b;
+        }
+        .language-bash .token.operator,
+        .language-swift .token.operator {
+            color: #fe8019;
+        }
+        .language-bash .token.function {
+            color: #b8bb26;
         }
         .feature-section {
             display: none;
+            animation: fadeIn 0.3s ease-in-out;
         }
         .feature-section.active {
             display: block;
         }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
         details summary {
             list-style: none;
+            user-select: none;
         }
         details summary::-webkit-details-marker {
             display: none;
         }
+        details[open] summary svg {
+            transform: rotate(180deg);
+        }
+        details summary svg {
+            transition: transform 0.2s ease-in-out;
+        }
+        /* Form section styling */
+        .form-section {
+            transition: all 0.2s ease-in-out;
+        }
+        .form-section:hover {
+            border-color: hsl(0 0% 85%);
+        }
+        .dark .form-section:hover {
+            border-color: hsl(0 0% 30%);
+        }
+        /* Input focus enhancement */
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        textarea,
+        select {
+            transition: all 0.2s ease-in-out;
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: hsl(0 0% 0%);
+            box-shadow: 0 0 0 3px hsla(0 0% 0% / 0.1);
+            transform: translateY(-1px);
+        }
+        .dark input[type="text"]:focus,
+        .dark input[type="number"]:focus,
+        .dark textarea:focus,
+        .dark select:focus {
+            border-color: hsl(0 0% 100%);
+            box-shadow: 0 0 0 3px hsla(0 0% 100% / 0.1);
+        }
+        input[type="file"]:focus {
+            outline: none;
+            border-color: hsl(0 0% 0%);
+        }
+        .dark input[type="file"]:focus {
+            border-color: hsl(0 0% 100%);
+        }
+        /* Smooth scrolling for main content */
+        main {
+            scroll-behavior: smooth;
+        }
+        /* Submit button styling */
+        button[type="submit"] {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .dark button[type="submit"]:hover {
+            box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+        }
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+        /* Details accordion styling */
+        details {
+            transition: all 0.2s ease-in-out;
+        }
+        details[open] {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        .dark details[open] {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+        /* Result panel styling */
+        .result-content img {
+            transition: transform 0.2s ease-in-out;
+        }
+        .result-content img:hover {
+            transform: scale(1.02);
+        }
+        /* Theme toggle button */
+        #theme-toggle {
+            transition: all 0.2s ease-in-out;
+        }
+        #theme-toggle:hover {
+            transform: rotate(10deg) scale(1.1);
+        }
+        #theme-toggle:active {
+            transform: rotate(0deg) scale(0.95);
+        }
+        /* Sidebar styling */
+        aside {
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        /* GitHub link styling */
+        aside a[href*="github"] {
+            transition: all 0.2s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        aside a[href*="github"]:hover {
+            transform: translateX(2px);
+        }
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        input[type="checkbox"]:hover {
+            transform: scale(1.1);
+        }
+        /* Label styling */
+        label {
+            transition: color 0.2s ease-in-out;
+        }
+        /* File input styling */
+        input[type="file"] {
+            cursor: pointer;
+        }
+        input[type="file"]::file-selector-button {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background-color: hsl(0 0% 94%);
+        }
+        .dark input[type="file"]::file-selector-button:hover {
+            background-color: hsl(0 0% 30%);
+        }
+        /* Loading state */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .result-content:has(.processing) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: hsl(0 0% 85%);
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: hsl(0 0% 30%);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: hsl(0 0% 75%);
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: hsl(0 0% 40%);
+        }
     </style>
 </head>
-<body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50">
+<body class="bg-white dark:bg-black text-black dark:text-white">
     <div class="flex h-screen overflow-hidden">
         <!-- Left Sidebar -->
-        <aside class="w-64 border-r border-slate-200 dark:border-slate-800 flex flex-col flex-shrink-0">
-            <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <aside class="w-64 border-r border-neutral-200 dark:border-neutral-800 flex flex-col flex-shrink-0 bg-white dark:bg-black">
+            <div class="p-6 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
                 <div>
                     <h1 class="text-xl font-bold">Hokusai</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Image Processing</p>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Image Processing</p>
                 </div>
-                <button id="theme-toggle" class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <button id="theme-toggle" class="p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors">
                     <svg id="theme-toggle-dark-icon" class="hidden w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                     </svg>
@@ -112,72 +411,82 @@
                 <a href="#" class="nav-item" onclick="switchFeature(event, 'composite')">Watermark/Composite</a>
                 <a href="#" class="nav-item" onclick="switchFeature(event, 'meta')">Image Metadata</a>
             </nav>
-            <div class="p-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
-                <a href="https://github.com/ivantokar/hokusai" class="hover:text-slate-900 dark:hover:text-slate-50 underline">GitHub</a>
+            <div class="p-4 border-t border-neutral-200 dark:border-neutral-800 text-xs text-neutral-500 dark:text-neutral-400">
+                <a href="https://github.com/ivantokar/hokusai" class="hover:text-black dark:hover:text-white underline">GitHub</a>
             </div>
         </aside>
 
         <!-- Center Content -->
-        <main class="flex-1 overflow-y-auto p-8">
+        <main class="flex-[2] overflow-y-auto p-8">
             <!-- Text Overlay -->
-            <div id="text-section" class="feature-section active max-w-2xl">
+            <div id="text-section" class="feature-section active">
                 <h2 class="text-2xl font-semibold mb-2">Advanced Text Rendering</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Showcase ImageMagick's full text rendering capabilities with custom fonts, colors, strokes, shadows, and more</p>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Showcase ImageMagick's full text rendering capabilities with custom fonts, colors, strokes, shadows, and more</p>
 
-                <form action="/demo/text" method="post" enctype="multipart/form-data" class="space-y-6 mb-8">
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- Left: Form -->
+                    <div>
+                        <form action="/demo/text" method="post" enctype="multipart/form-data" class="space-y-6 mb-8">
                     <!-- Base Image -->
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/30">
+                    <div class="form-section border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 bg-white/50 dark:bg-neutral-900/30">
                         <h3 class="text-sm font-semibold mb-3">Base Image *</h3>
                         <div>
                             <input type="file" name="image" accept="image/*" required
-                                   class="block w-full text-sm border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 file:border-0 file:bg-slate-100 dark:file:bg-slate-800 file:text-slate-900 dark:file:text-slate-50 file:px-4 file:py-2 file:mr-4">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Upload an image to add text overlay</p>
+                                   class="block w-full text-sm border border-neutral-200 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-900 file:border-0 file:bg-neutral-100 dark:file:bg-neutral-800 file:text-black dark:file:text-white file:px-4 file:py-2 file:mr-4">
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">Upload an image to add text overlay</p>
                         </div>
                     </div>
 
                     <!-- Text Content -->
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/30">
+                    <div class="form-section border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 bg-white/50 dark:bg-neutral-900/30">
                         <h3 class="text-sm font-semibold mb-3">Text Content</h3>
                         <div>
                             <label class="block text-sm font-medium mb-2">Text *</label>
                             <textarea name="text" rows="2" placeholder="Hello World" required
-                                      class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50"></textarea>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Supports line breaks for multi-line text</p>
+                                      class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"></textarea>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Supports line breaks for multi-line text</p>
                         </div>
                     </div>
 
                     <!-- Font Settings -->
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/30">
+                    <div class="form-section border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 bg-white/50 dark:bg-neutral-900/30">
                         <h3 class="text-sm font-semibold mb-3">Font Settings</h3>
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium mb-2">Font Family</label>
-                                <select id="fontSelect" name="fontUrl" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                <select id="fontSelect" name="fontFamily" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                                     <option value="">System Default</option>
-                                    <option value="https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf">Roboto</option>
-                                    <option value="https://fonts.gstatic.com/s/opensans/v34/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0C4n.ttf">Open Sans</option>
-                                    <option value="https://fonts.gstatic.com/s/lato/v23/S6uyw4BMUTPHjx4wXiWtFCc.ttf">Lato</option>
-                                    <option value="https://fonts.gstatic.com/s/montserrat/v25/JTUSjIg1_i6t8kCHKm459Wlhyw.ttf">Montserrat</option>
-                                    <option value="https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf">Playfair Display</option>
-                                    <option value="https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJfecg.ttf">Poppins</option>
-                                    <option value="https://fonts.gstatic.com/s/oswald/v49/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvsUtiZTaR.ttf">Oswald</option>
+                                    <option value="Inter" data-category="sans-serif">Inter (Sans-serif)</option>
+                                    <option value="Playfair Display" data-category="serif">Playfair Display (Serif)</option>
+                                    <option value="JetBrains Mono" data-category="monospace">JetBrains Mono (Monospace)</option>
                                 </select>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Select a Google Font or use system default</p>
+                                <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">Select a font family with full weight support (400-900)</p>
                             </div>
-                            <div class="grid grid-cols-3 gap-4">
+                            <div class="grid grid-cols-4 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Font Size</label>
                                     <input type="number" name="fontSize" value="48" min="1"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Font Weight</label>
+                                    <select name="fontWeight" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
+                                        <option value="400" selected>Normal (400)</option>
+                                        <option value="500">Medium (500)</option>
+                                        <option value="600">Semi-Bold (600)</option>
+                                        <option value="700">Bold (700)</option>
+                                        <option value="800">Extra-Bold (800)</option>
+                                        <option value="900">Black (900)</option>
+                                    </select>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">DPI</label>
                                     <input type="number" name="dpi" value="72" min="1"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Alignment</label>
-                                    <select name="align" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                    <select name="align" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                                         <option value="left">Left</option>
                                         <option value="center">Center</option>
                                         <option value="right">Right</option>
@@ -188,31 +497,31 @@
                     </div>
 
                     <!-- Color & Opacity -->
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/30">
+                    <div class="form-section border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 bg-white/50 dark:bg-neutral-900/30">
                         <h3 class="text-sm font-semibold mb-3">Color & Opacity</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium mb-2">Text Color (hex or RGBA)</label>
                                 <input type="text" name="color" placeholder="#FFFFFF or 255,255,255,255"
-                                       class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                       class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium mb-2">Text Opacity (0.0-1.0)</label>
                                 <input type="number" name="opacity" step="0.1" min="0" max="1" placeholder="1.0"
-                                       class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                       class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                             </div>
                         </div>
                     </div>
 
                     <!-- Stroke / Outline -->
-                    <details class="border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50/50 dark:bg-slate-900/30">
-                        <summary class="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors">
+                    <details class="border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white/50 dark:bg-neutral-900/30">
+                        <summary class="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900/50 rounded-lg transition-colors">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <input type="checkbox" id="enableStroke" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-900" onclick="event.stopPropagation()">
+                                    <input type="checkbox" id="enableStroke" class="h-4 w-4 rounded border-neutral-300 text-black focus:ring-neutral-900 dark:border-neutral-600 dark:bg-neutral-900" onclick="event.stopPropagation()">
                                     <h3 class="text-sm font-semibold">Stroke / Outline</h3>
                                 </div>
-                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-neutral-500 dark:text-neutral-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
@@ -222,31 +531,31 @@
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Stroke Width</label>
                                     <input type="number" name="strokeWidth" value="2" step="0.1" min="0" id="strokeWidth"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Stroke Color</label>
                                     <input type="text" name="strokeColor" placeholder="#000000" id="strokeColor"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Stroke Opacity</label>
                                     <input type="number" name="strokeOpacity" step="0.1" min="0" max="1" placeholder="1.0" id="strokeOpacity"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                             </div>
                         </div>
                     </details>
 
                     <!-- Shadow Effects -->
-                    <details class="border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50/50 dark:bg-slate-900/30">
-                        <summary class="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors">
+                    <details class="border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white/50 dark:bg-neutral-900/30">
+                        <summary class="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900/50 rounded-lg transition-colors">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <input type="checkbox" id="enableShadow" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-900" onclick="event.stopPropagation()">
+                                    <input type="checkbox" id="enableShadow" class="h-4 w-4 rounded border-neutral-300 text-black focus:ring-neutral-900 dark:border-neutral-600 dark:bg-neutral-900" onclick="event.stopPropagation()">
                                     <h3 class="text-sm font-semibold">Shadow Effects</h3>
                                 </div>
-                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-neutral-500 dark:text-neutral-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
@@ -256,36 +565,36 @@
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Shadow X</label>
                                     <input type="number" name="shadowOffsetX" step="1" placeholder="3" id="shadowOffsetX"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Shadow Y</label>
                                     <input type="number" name="shadowOffsetY" step="1" placeholder="3" id="shadowOffsetY"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Shadow Color</label>
                                     <input type="text" name="shadowColor" placeholder="#000000" id="shadowColor"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Shadow Opacity</label>
                                     <input type="number" name="shadowOpacity" step="0.1" min="0" max="1" placeholder="0.5" id="shadowOpacity"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                             </div>
                         </div>
                     </details>
 
                     <!-- Typography -->
-                    <details class="border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50/50 dark:bg-slate-900/30">
-                        <summary class="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors">
+                    <details class="border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white/50 dark:bg-neutral-900/30">
+                        <summary class="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900/50 rounded-lg transition-colors">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <input type="checkbox" id="enableTypography" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-900" onclick="event.stopPropagation()">
+                                    <input type="checkbox" id="enableTypography" class="h-4 w-4 rounded border-neutral-300 text-black focus:ring-neutral-900 dark:border-neutral-600 dark:bg-neutral-900" onclick="event.stopPropagation()">
                                     <h3 class="text-sm font-semibold">Typography</h3>
                                 </div>
-                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-neutral-500 dark:text-neutral-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
@@ -295,36 +604,36 @@
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Kerning</label>
                                     <input type="number" name="kerning" step="0.1" placeholder="0" id="kerning"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Line Spacing</label>
                                     <input type="number" name="lineSpacing" step="0.1" placeholder="1.0" id="lineSpacing"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Text Width (wrap)</label>
                                     <input type="number" name="textWidth" placeholder="Auto" id="textWidth"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Text Height (limit)</label>
                                     <input type="number" name="textHeight" placeholder="Auto" id="textHeight"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                             </div>
                         </div>
                     </details>
 
                     <!-- Transform & Position -->
-                    <details class="border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50/50 dark:bg-slate-900/30">
-                        <summary class="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors">
+                    <details class="border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white/50 dark:bg-neutral-900/30">
+                        <summary class="p-4 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900/50 rounded-lg transition-colors">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <input type="checkbox" id="enableTransform" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-900" onclick="event.stopPropagation()">
+                                    <input type="checkbox" id="enableTransform" class="h-4 w-4 rounded border-neutral-300 text-black focus:ring-neutral-900 dark:border-neutral-600 dark:bg-neutral-900" onclick="event.stopPropagation()">
                                     <h3 class="text-sm font-semibold">Transform & Position</h3>
                                 </div>
-                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-neutral-500 dark:text-neutral-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
@@ -334,11 +643,11 @@
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Rotation (degrees)</label>
                                     <input type="number" name="rotation" step="1" placeholder="0" id="rotation"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Position Preset</label>
-                                    <select name="position" id="position" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                    <select name="position" id="position" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                         <option value="">Custom X/Y</option>
                                         <option value="center">Center</option>
                                         <option value="top">Top</option>
@@ -351,7 +660,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Gravity</label>
-                                    <select name="gravity" id="gravity" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                    <select name="gravity" id="gravity" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                         <option value="">None</option>
                                         <option value="center">Center</option>
                                         <option value="north">North</option>
@@ -369,72 +678,112 @@
                                 <div>
                                     <label class="block text-sm font-medium mb-2">X Coordinate</label>
                                     <input type="number" name="x" placeholder="Auto (center)" id="xCoord"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Y Coordinate</label>
                                     <input type="number" name="y" placeholder="Auto (center)" id="yCoord"
-                                           class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50" disabled>
+                                           class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white" disabled>
                                 </div>
                             </div>
                         </div>
                     </details>
 
-                    <button type="submit" class="w-full bg-slate-900 dark:bg-slate-50 text-slate-50 dark:text-slate-900 px-4 py-2.5 rounded-md text-sm font-medium hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                    <button type="submit" class="w-full bg-black dark:bg-white text-white dark:text-black px-4 py-2.5 rounded-md text-sm font-medium hover:bg-neutral-900 dark:hover:bg-neutral-200 transition-colors">
                         Generate Image with Text
                     </button>
                 </form>
+                    </div>
+
+                    <!-- Right: Code Examples -->
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">cURL</h3>
+                            <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/text \
+  -F "image=@certificate.png" \
+  -F "text=John Doe" \
+  -F "fontUrl=https://fonts.gstatic.com/.../playfairdisplay-700.ttf" \
+  -F "fontSize=72" \
+  -F "fontWeight=700" \
+  -F "color=#2c3e50" \
+  -F "position=center" \
+  -o output.png</code></pre>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">Swift</h3>
+                            <pre><code class="language-swift">let image = try await Hokusai.image(from: "certificate.png")
+
+var options = TextOptions()
+options.fontSize = 72
+options.fontWeight = 700
+options.color = [44, 62, 80, 255]
+options.position = .center
+
+let result = try await image.text(
+    "John Doe",
+    options: options
+)
+
+try result.toFile("output.png")</code></pre>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Resize Image -->
-            <div id="resize-section" class="feature-section max-w-2xl">
+            <div id="resize-section" class="feature-section">
                 <h2 class="text-2xl font-semibold mb-2">Resize Image</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">High-performance resizing with multiple fit modes using libvips</p>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">High-performance resizing with multiple fit modes using libvips</p>
 
-                <form action="/demo/resize" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- Left: Form -->
+                    <div>
+                        <form action="/demo/resize" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
                     <div>
                         <label class="block text-sm font-medium mb-2">Image</label>
                         <input type="file" name="image" accept="image/*" required
-                               class="block w-full text-sm border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 file:border-0 file:bg-slate-100 dark:file:bg-slate-800 file:text-slate-900 dark:file:text-slate-50 file:px-4 file:py-2 file:mr-4">
+                               class="block w-full text-sm border border-neutral-200 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-900 file:border-0 file:bg-neutral-100 dark:file:bg-neutral-800 file:text-black dark:file:text-white file:px-4 file:py-2 file:mr-4">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium mb-2">Width</label>
                             <input type="number" name="width" placeholder="800"
-                                   class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                   class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2">Height</label>
                             <input type="number" name="height" placeholder="600"
-                                   class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                   class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-2">Fit Mode</label>
-                        <select name="fit" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                        <select name="fit" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                             <option value="inside">Inside (preserve aspect ratio)</option>
                             <option value="cover">Cover (crop to fill)</option>
                             <option value="fill">Fill (stretch to fit)</option>
                         </select>
                     </div>
-                    <button type="submit" class="w-full bg-slate-900 dark:bg-slate-50 text-slate-50 dark:text-slate-900 px-4 py-2.5 rounded-md text-sm hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                    <button type="submit" class="w-full bg-black dark:bg-white text-white dark:text-black px-4 py-2.5 rounded-md text-sm hover:bg-neutral-900 dark:hover:bg-neutral-200 transition-colors">
                         Resize Image
                     </button>
                 </form>
+                    </div>
 
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">cURL</h3>
-                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/resize \
+                    <!-- Right: Code Examples -->
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">cURL</h3>
+                            <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/resize \
   -F "image=@photo.jpg" \
   -F "width=800" \
   -F "height=600" \
   -F "fit=inside" \
   -o resized.jpg</code></pre>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-slate-500 dark:text-slate-400">Swift</h3>
-                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">Swift</h3>
+                            <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
 
 var options = ResizeOptions()
 options.fit = .inside
@@ -446,24 +795,28 @@ let resized = try image.resize(
 )
 
 try resized.toFile("output.jpg", quality: 85)</code></pre>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Convert Format -->
-            <div id="convert-section" class="feature-section max-w-2xl">
+            <div id="convert-section" class="feature-section">
                 <h2 class="text-2xl font-semibold mb-2">Convert Format</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Convert between JPEG, PNG, WebP, AVIF, and GIF formats</p>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Convert between JPEG, PNG, WebP, AVIF, and GIF formats</p>
 
-                <form action="/demo/convert" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- Left: Form -->
+                    <div>
+                        <form action="/demo/convert" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
                     <div>
                         <label class="block text-sm font-medium mb-2">Image</label>
                         <input type="file" name="image" accept="image/*" required
-                               class="block w-full text-sm border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 file:border-0 file:bg-slate-100 dark:file:bg-slate-800 file:text-slate-900 dark:file:text-slate-50 file:px-4 file:py-2 file:mr-4">
+                               class="block w-full text-sm border border-neutral-200 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-900 file:border-0 file:bg-neutral-100 dark:file:bg-neutral-800 file:text-black dark:file:text-white file:px-4 file:py-2 file:mr-4">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-2">Output Format</label>
-                        <select name="format" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                        <select name="format" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                             <option value="jpeg">JPEG</option>
                             <option value="png">PNG</option>
                             <option value="webp">WebP</option>
@@ -474,126 +827,140 @@ try resized.toFile("output.jpg", quality: 85)</code></pre>
                     <div>
                         <label class="block text-sm font-medium mb-2">Quality (1-100)</label>
                         <input type="number" name="quality" value="85" min="1" max="100"
-                               class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                               class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                     </div>
-                    <button type="submit" class="w-full bg-slate-900 dark:bg-slate-50 text-slate-50 dark:text-slate-900 px-4 py-2.5 rounded-md text-sm hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                    <button type="submit" class="w-full bg-black dark:bg-white text-white dark:text-black px-4 py-2.5 rounded-md text-sm hover:bg-neutral-900 dark:hover:bg-neutral-200 transition-colors">
                         Convert Image
                     </button>
                 </form>
+                    </div>
 
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">cURL</h3>
-                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/convert \
+                    <!-- Right: Code Examples -->
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">cURL</h3>
+                            <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/convert \
   -F "image=@photo.jpg" \
   -F "format=webp" \
   -F "quality=80" \
   -o output.webp</code></pre>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-slate-500 dark:text-slate-400">Swift</h3>
-                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">Swift</h3>
+                            <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
 
 try image.toFile("output.webp", quality: 80)</code></pre>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Rotate Image -->
-            <div id="rotate-section" class="feature-section max-w-2xl">
+            <div id="rotate-section" class="feature-section">
                 <h2 class="text-2xl font-semibold mb-2">Rotate Image</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Fast 90°, 180°, and 270° rotations</p>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Fast 90°, 180°, and 270° rotations</p>
 
-                <form action="/demo/rotate" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- Left: Form -->
+                    <div>
+                        <form action="/demo/rotate" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
                     <div>
                         <label class="block text-sm font-medium mb-2">Image</label>
                         <input type="file" name="image" accept="image/*" required
-                               class="block w-full text-sm border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 file:border-0 file:bg-slate-100 dark:file:bg-slate-800 file:text-slate-900 dark:file:text-slate-50 file:px-4 file:py-2 file:mr-4">
+                               class="block w-full text-sm border border-neutral-200 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-900 file:border-0 file:bg-neutral-100 dark:file:bg-neutral-800 file:text-black dark:file:text-white file:px-4 file:py-2 file:mr-4">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-2">Rotation</label>
-                        <select name="angle" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                        <select name="angle" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                             <option value="90">90° clockwise</option>
                             <option value="180">180°</option>
                             <option value="270">270° clockwise</option>
                         </select>
                     </div>
-                    <button type="submit" class="w-full bg-slate-900 dark:bg-slate-50 text-slate-50 dark:text-slate-900 px-4 py-2.5 rounded-md text-sm hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                    <button type="submit" class="w-full bg-black dark:bg-white text-white dark:text-black px-4 py-2.5 rounded-md text-sm hover:bg-neutral-900 dark:hover:bg-neutral-200 transition-colors">
                         Rotate Image
                     </button>
                 </form>
+                    </div>
 
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">cURL</h3>
-                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/rotate \
+                    <!-- Right: Code Examples -->
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">cURL</h3>
+                            <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/rotate \
   -F "image=@photo.jpg" \
   -F "angle=90" \
   -o rotated.jpg</code></pre>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-slate-500 dark:text-slate-400">Swift</h3>
-                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">Swift</h3>
+                            <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
 
 let rotated = try image.rotate(angle: .degree90)
 
 try rotated.toFile("output.jpg", quality: 85)</code></pre>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Watermark/Composite -->
-            <div id="composite-section" class="feature-section max-w-2xl">
+            <div id="composite-section" class="feature-section">
                 <h2 class="text-2xl font-semibold mb-2">Watermark/Composite</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Overlay images with position, opacity, and blend modes</p>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Overlay images with position, opacity, and blend modes</p>
 
-                <form action="/demo/composite" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- Left: Form -->
+                    <div>
+                        <form action="/demo/composite" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
                     <div>
                         <label class="block text-sm font-medium mb-2">Base Image</label>
                         <input type="file" name="baseImage" accept="image/*" required
-                               class="block w-full text-sm border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 file:border-0 file:bg-slate-100 dark:file:bg-slate-800 file:text-slate-900 dark:file:text-slate-50 file:px-4 file:py-2 file:mr-4">
+                               class="block w-full text-sm border border-neutral-200 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-900 file:border-0 file:bg-neutral-100 dark:file:bg-neutral-800 file:text-black dark:file:text-white file:px-4 file:py-2 file:mr-4">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-2">Watermark/Overlay Image</label>
                         <input type="file" name="overlayImage" accept="image/*" required
-                               class="block w-full text-sm border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 file:border-0 file:bg-slate-100 dark:file:bg-slate-800 file:text-slate-900 dark:file:text-slate-50 file:px-4 file:py-2 file:mr-4">
+                               class="block w-full text-sm border border-neutral-200 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-900 file:border-0 file:bg-neutral-100 dark:file:bg-neutral-800 file:text-black dark:file:text-white file:px-4 file:py-2 file:mr-4">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium mb-2">X Position</label>
                             <input type="number" name="x" value="10" min="0"
-                                   class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                   class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2">Y Position</label>
                             <input type="number" name="y" value="10" min="0"
-                                   class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                   class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium mb-2">Opacity (0.0-1.0)</label>
                             <input type="number" name="opacity" value="1.0" min="0" max="1" step="0.1"
-                                   class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                                   class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2">Blend Mode</label>
-                            <select name="mode" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-50">
+                            <select name="mode" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
                                 <option value="over">Over (default)</option>
                                 <option value="add">Add (lighten)</option>
                                 <option value="multiply">Multiply (darken)</option>
                             </select>
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-slate-900 dark:bg-slate-50 text-slate-50 dark:text-slate-900 px-4 py-2.5 rounded-md text-sm hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                    <button type="submit" class="w-full bg-black dark:bg-white text-white dark:text-black px-4 py-2.5 rounded-md text-sm hover:bg-neutral-900 dark:hover:bg-neutral-200 transition-colors">
                         Apply Watermark
                     </button>
                 </form>
+                    </div>
 
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-slate-500 dark:text-slate-400">cURL</h3>
-                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/composite \
+                    <!-- Right: Code Examples -->
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">cURL</h3>
+                            <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/composite \
   -F "baseImage=@photo.jpg" \
   -F "overlayImage=@watermark.png" \
   -F "x=10" \
@@ -601,10 +968,10 @@ try rotated.toFile("output.jpg", quality: 85)</code></pre>
   -F "opacity=0.8" \
   -F "mode=over" \
   -o watermarked.png</code></pre>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-slate-500 dark:text-slate-400">Swift</h3>
-                        <pre><code class="language-swift">let base = try await Hokusai.image(from: "photo.jpg")
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">Swift</h3>
+                            <pre><code class="language-swift">let base = try await Hokusai.image(from: "photo.jpg")
 let watermark = try await Hokusai.image(from: "logo.png")
 
 var options = CompositeOptions()
@@ -619,35 +986,41 @@ let watermarked = try base.composite(
 )
 
 try watermarked.toFile("output.png", quality: 90)</code></pre>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Image Metadata -->
-            <div id="meta-section" class="feature-section max-w-2xl">
+            <div id="meta-section" class="feature-section">
                 <h2 class="text-2xl font-semibold mb-2">Image Metadata</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Extract image dimensions, format, and properties</p>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Extract image dimensions, format, and properties</p>
 
-                <form action="/demo/metadata" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- Left: Form -->
+                    <div>
+                        <form action="/demo/metadata" method="post" enctype="multipart/form-data" class="space-y-4 mb-8">
                     <div>
                         <label class="block text-sm font-medium mb-2">Image</label>
                         <input type="file" name="image" accept="image/*" required
-                               class="block w-full text-sm border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 file:border-0 file:bg-slate-100 dark:file:bg-slate-800 file:text-slate-900 dark:file:text-slate-50 file:px-4 file:py-2 file:mr-4">
+                               class="block w-full text-sm border border-neutral-200 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-900 file:border-0 file:bg-neutral-100 dark:file:bg-neutral-800 file:text-black dark:file:text-white file:px-4 file:py-2 file:mr-4">
                     </div>
-                    <button type="submit" class="w-full bg-slate-900 dark:bg-slate-50 text-slate-50 dark:text-slate-900 px-4 py-2.5 rounded-md text-sm hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                    <button type="submit" class="w-full bg-black dark:bg-white text-white dark:text-black px-4 py-2.5 rounded-md text-sm hover:bg-neutral-900 dark:hover:bg-neutral-200 transition-colors">
                         Get Metadata
                     </button>
                 </form>
-
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-muted-foreground">cURL</h3>
-                        <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/metadata \
-  -F "image=@photo.jpg"</code></pre>
                     </div>
-                    <div>
-                        <h3 class="text-sm font-semibold mb-2 text-slate-500 dark:text-slate-400">Swift</h3>
-                        <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
+
+                    <!-- Right: Code Examples -->
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">cURL</h3>
+                            <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/metadata \
+  -F "image=@photo.jpg"</code></pre>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">Swift</h3>
+                            <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
 let metadata = try image.metadata()
 
 print("Width: \(metadata.width)")
@@ -655,19 +1028,20 @@ print("Height: \(metadata.height)")
 print("Format: \(metadata.format?.rawValue ?? "unknown")")
 print("Channels: \(metadata.channels)")
 print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
 
         <!-- Right Results Panel -->
-        <aside class="w-96 border-l border-slate-200 dark:border-slate-800 flex flex-col flex-shrink-0 bg-slate-50 dark:bg-slate-900/50">
-            <div class="p-4 border-b border-slate-200 dark:border-slate-800">
+        <aside class="flex-1 border-l border-neutral-200 dark:border-neutral-800 flex flex-col bg-white dark:bg-black">
+            <div class="p-4 border-b border-neutral-200 dark:border-neutral-800">
                 <h3 class="text-sm font-semibold">Result</h3>
             </div>
             <div class="flex-1 overflow-y-auto p-4">
                 <div class="result-content">
-                    <div class="text-center text-slate-500 dark:text-slate-400 text-sm py-12">
+                    <div class="text-center text-neutral-500 dark:text-neutral-400 text-sm py-12">
                         <p>Upload and process an image to see the result here</p>
                     </div>
                 </div>
@@ -742,6 +1116,10 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
             const formData = new FormData();
             const formElements = form.elements;
 
+            // Track fontFamily and fontWeight for URL generation
+            let fontFamily = null;
+            let fontWeight = null;
+
             for (let i = 0; i < formElements.length; i++) {
                 const element = formElements[i];
 
@@ -756,14 +1134,28 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
                         formData.append(element.name, element.files[0]);
                     }
                 }
+                // Handle fontFamily - store but don't append yet
+                else if (element.name === 'fontFamily' && element.value && element.value.trim() !== '') {
+                    fontFamily = element.value.trim();
+                }
+                // Handle fontWeight - store for URL generation
+                else if (element.name === 'fontWeight' && element.value && element.value.trim() !== '') {
+                    fontWeight = parseInt(element.value);
+                    formData.append(element.name, element.value);
+                }
                 // Handle other inputs - only add if they have a value
                 else if (element.value && element.value.trim() !== '') {
                     formData.append(element.name, element.value);
                 }
             }
 
+            // Convert fontFamily + fontWeight to fontUrl
+            if (fontFamily && fontWeight && fontUrlMap[fontFamily] && fontUrlMap[fontFamily][fontWeight]) {
+                formData.append('fontUrl', fontUrlMap[fontFamily][fontWeight]);
+            }
+
             // Show loading state
-            resultPanel.innerHTML = '<div class="text-center text-slate-500 dark:text-slate-400 text-sm py-12"><p>Processing...</p></div>';
+            resultPanel.innerHTML = '<div class="text-center text-neutral-500 dark:text-neutral-400 text-sm py-12"><p>Processing...</p></div>';
 
             try {
                 // Build fetch options
@@ -792,20 +1184,48 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
                 if (contentType && contentType.includes('application/json')) {
                     // Handle JSON response (metadata)
                     const data = await response.json();
-                    resultPanel.innerHTML = '<pre class="text-sm bg-slate-100 dark:bg-slate-800 p-4 rounded-md overflow-auto">' +
+                    resultPanel.innerHTML = '<pre class="text-sm bg-neutral-100 dark:bg-neutral-800 p-4 rounded-md overflow-auto">' +
                         JSON.stringify(data, null, 2) + '</pre>';
                 } else if (contentType && contentType.startsWith('image/')) {
                     // Handle image response
                     const blob = await response.blob();
                     const imageUrl = URL.createObjectURL(blob);
-                    resultPanel.innerHTML = '<img src="' + imageUrl + '" class="max-w-full h-auto rounded-md border border-slate-200 dark:border-slate-700" />';
+                    resultPanel.innerHTML = '<img src="' + imageUrl + '" class="max-w-full h-auto rounded-md border border-neutral-200 dark:border-neutral-700" />';
                 } else {
-                    resultPanel.innerHTML = '<div class="text-sm text-slate-500 dark:text-slate-400">Result received (unknown format)</div>';
+                    resultPanel.innerHTML = '<div class="text-sm text-neutral-500 dark:text-neutral-400">Result received (unknown format)</div>';
                 }
             } catch (error) {
                 resultPanel.innerHTML = '<div class="text-sm text-red-600 dark:text-red-400 p-4">Error: ' + error.message + '</div>';
             }
         }
+
+        // Font weight to Google Fonts URL mapping
+        const fontUrlMap = {
+            'Inter': {
+                400: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.ttf',
+                500: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fAZ9hiA.ttf',
+                600: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYAZ9hiA.ttf',
+                700: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYAZ9hiA.ttf',
+                800: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuDyYAZ9hiA.ttf',
+                900: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuBWYAZ9hiA.ttf'
+            },
+            'Playfair Display': {
+                400: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf',
+                500: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKd3vUDQZNLo_U2r.ttf',
+                600: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKebukDQZNLo_U2r.ttf',
+                700: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKeiukDQZNLo_U2r.ttf',
+                800: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKfFukDQZNLo_U2r.ttf',
+                900: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKfsukDQZNLo_U2r.ttf'
+            },
+            'JetBrains Mono': {
+                400: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTOlOVgaY.ttf',
+                500: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjOlOVgaY.ttf',
+                600: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKw7PVOVgaY.ttf',
+                700: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwCPVOVgaY.ttf',
+                800: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPVOVgaY.ttf',
+                900: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxKPVOVgaY.ttf'
+            }
+        };
 
         // Initial syntax highlighting
         document.addEventListener('DOMContentLoaded', function() {
@@ -849,6 +1269,36 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
             setupToggle('enableShadow', ['shadowOffsetX', 'shadowOffsetY', 'shadowColor', 'shadowOpacity'], shadowDetails);
             setupToggle('enableTypography', ['kerning', 'lineSpacing', 'textWidth', 'textHeight'], typographyDetails);
             setupToggle('enableTransform', ['rotation', 'position', 'gravity', 'xCoord', 'yCoord'], transformDetails);
+
+            // Add copy buttons to all code blocks
+            document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'code-block-wrapper';
+                pre.parentNode.insertBefore(wrapper, pre);
+                wrapper.appendChild(pre);
+
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = 'Copy';
+                button.addEventListener('click', async () => {
+                    const code = pre.querySelector('code').textContent;
+                    try {
+                        await navigator.clipboard.writeText(code);
+                        button.textContent = 'Copied!';
+                        button.classList.add('copied');
+                        setTimeout(() => {
+                            button.textContent = 'Copy';
+                            button.classList.remove('copied');
+                        }, 2000);
+                    } catch (err) {
+                        button.textContent = 'Failed';
+                        setTimeout(() => {
+                            button.textContent = 'Copy';
+                        }, 2000);
+                    }
+                });
+                wrapper.appendChild(button);
+            });
         });
     </script>
 </body>
