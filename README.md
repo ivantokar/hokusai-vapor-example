@@ -1,6 +1,30 @@
 # Hokusai Vapor Example
 
-A demo Vapor application showcasing [Hokusai](https://github.com/ivantokar/hokusai) and [HokusaiVapor](https://github.com/ivantokar/hokusai-vapor) features for server-side image processing.
+**Interactive demo application for Hokusai image processing**
+
+A production-ready Vapor application demonstrating the full capabilities of [Hokusai](https://github.com/ivantokar/hokusai) and [Hokusai Vapor](https://github.com/ivantokar/hokusai-vapor). Features a beautiful web UI for testing image operations interactively, plus comprehensive REST API endpoints.
+
+## Features
+
+- 🎨 **Interactive Web UI** - Modern interface for testing all image operations
+- 🌓 **Dark Mode** - Pure monochromatic theme with smooth transitions
+- 🔤 **Advanced Text Demo** - Showcase ImageMagick's full text rendering capabilities
+  - Custom Google Fonts with all weight variants (400-900)
+  - Stroke/outline with customizable width and color
+  - Drop shadows with offset and opacity control
+  - Typography controls (kerning, line spacing, alignment)
+  - Text rotation and positioning
+- 🖼️ **Image Operations** - Resize, rotate, crop, format conversion, compositing
+- 📊 **Live Preview** - See results instantly in the browser
+- 📝 **Code Examples** - View cURL and Swift code for each operation
+- 🐳 **Docker Ready** - Production Dockerfile with multi-stage builds
+
+## Perfect For
+
+- **Learning** - Explore Hokusai's capabilities interactively
+- **Prototyping** - Test image processing workflows before implementation
+- **Reference** - Production-ready code examples and patterns
+- **Starter Template** - Clone and customize for your own image processing API
 
 ## Prerequisites
 
@@ -42,11 +66,11 @@ Open http://localhost:8081
 
 ## What's Included
 
-- **Demo endpoints** for text overlay, resize, composite, and format conversion
-- **Web UI** for interactive testing
-- **Sample images** in TestAssets/
-- **Test script** (`test-demo.sh`) for CLI testing
-- **Docker configuration** for production deployment
+- **Demo UI** (`/`) - Interactive web interface with all features
+- **REST API** - Production-ready endpoints for all operations
+- **Sample Assets** - Test images, certificates, watermarks
+- **Documentation** - Comprehensive examples and API usage
+- **Docker Config** - Multi-stage build with libvips + ImageMagick
 
 ## Testing Endpoints
 
