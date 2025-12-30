@@ -6,18 +6,18 @@ A production-ready Vapor application demonstrating the full capabilities of [Hok
 
 ## Features
 
-- 🎨 **Interactive Web UI** - Modern interface for testing all image operations
-- 🌓 **Dark Mode** - Pure monochromatic theme with smooth transitions
-- 🔤 **Advanced Text Demo** - Showcase ImageMagick's full text rendering capabilities
+- **Interactive Web UI** - Modern interface for testing all image operations
+- **Dark Mode** - Pure monochromatic theme with smooth transitions
+- **Advanced Text Demo** - Showcase ImageMagick's full text rendering capabilities
   - Custom Google Fonts with all weight variants (400-900)
   - Stroke/outline with customizable width and color
   - Drop shadows with offset and opacity control
   - Typography controls (kerning, line spacing, alignment)
   - Text rotation and positioning
-- 🖼️ **Image Operations** - Resize, rotate, crop, format conversion, compositing
-- 📊 **Live Preview** - See results instantly in the browser
-- 📝 **Code Examples** - View cURL and Swift code for each operation
-- 🐳 **Docker Ready** - Production Dockerfile with multi-stage builds
+- **Image Operations** - Resize, rotate, crop, format conversion, compositing
+- **Live Preview** - See results instantly in the browser
+- **Code Examples** - View cURL and Swift code for each operation
+- **Docker Ready** - Production Dockerfile with multi-stage builds
 
 ## Perfect For
 
