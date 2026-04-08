@@ -1,5 +1,9 @@
 # Hokusai Vapor Example
 
+<p align="center">
+<img src="./hokusai-vapor-example-demo.png" alt="Demo Screenshot" width="100%">
+</p>
+
 **Interactive demo application for Hokusai image processing**
 
 A production-ready Vapor application demonstrating the full capabilities of [Hokusai](https://github.com/ivantokar/hokusai) and [Hokusai Vapor](https://github.com/ivantokar/hokusai-vapor). Features a beautiful web UI for testing image operations interactively, plus comprehensive REST API endpoints.
