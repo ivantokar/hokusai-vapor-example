@@ -3,7 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hokusai - Hybrid Image Processing</title>
+    <title>Hokusai - libvips-Only Image Processing Demo</title>
+    <meta name="description" content="Interactive demo for Hokusai and HokusaiVapor: libvips-only image processing with text rendering, resize, rotate, convert, composite, and metadata APIs.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hokusai - libvips-Only Image Processing Demo">
+    <meta property="og:description" content="Interactive demo for Hokusai and HokusaiVapor with libvips-only processing and advanced text rendering.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/ivantokar/hokusai-vapor-example/main/hokusai-vapor-example-demo.png">
+    <meta property="og:url" content="https://github.com/ivantokar/hokusai-vapor-example">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hokusai - libvips-Only Image Processing Demo">
+    <meta name="twitter:description" content="Interactive demo for Hokusai and HokusaiVapor with libvips-only processing and advanced text rendering.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/ivantokar/hokusai-vapor-example/main/hokusai-vapor-example-demo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
