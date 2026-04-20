@@ -17,7 +17,7 @@ let package = Package(
         // Non-blocking, event-driven networking for Swift. Used for custom executors
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.65.0"),
         // Hokusai Vapor integration
-        .package(url: "https://github.com/ivantokar/hokusai-vapor.git", from: "0.1.0"),
+        .package(url: "https://github.com/ivantokar/hokusai-vapor.git", from: "0.2.0"),
     ],
     targets: [
         .executableTarget(
@@ -28,6 +28,9 @@ let package = Package(
                 .product(name: "HokusaiVapor", package: "hokusai-vapor"),
                 .product(name: "NIOCore", package: "swift-nio"),
                 .product(name: "NIOPosix", package: "swift-nio"),
+            ],
+            resources: [
+                .process("Resources/Fonts"),
             ],
             swiftSettings: swiftSettings
         )

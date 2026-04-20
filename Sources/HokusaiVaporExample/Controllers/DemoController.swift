@@ -4,6 +4,33 @@ import HokusaiVapor
 import Hokusai
 
 struct DemoController: RouteCollection {
+    private struct FontPreset {
+        let id: String
+        let displayName: String
+        let fontDescriptor: String
+        let resourceFile: String
+    }
+
+    private static let defaultFontPresetId = "afacad-regular-400"
+
+    private static let fontPresets: [String: FontPreset] = {
+        let presets: [FontPreset] = [
+            .init(id: "afacad-regular-400", displayName: "Afacad Regular 400", fontDescriptor: "Afacad Regular", resourceFile: "Afacad-Variable"),
+            .init(id: "afacad-semibold-600-italic", displayName: "Afacad SemiBold 600 Italic", fontDescriptor: "Afacad SemiBold Italic", resourceFile: "Afacad-Italic-Variable"),
+            .init(id: "passeroone-regular-400", displayName: "Passero One Regular 400", fontDescriptor: "Passero One Regular", resourceFile: "PasseroOne-Regular"),
+            .init(id: "ojuju-extralight-200", displayName: "Ojuju ExtraLight 200", fontDescriptor: "Ojuju ExtraLight", resourceFile: "Ojuju-Variable"),
+            .init(id: "ojuju-extrabold-800", displayName: "Ojuju ExtraBold 800", fontDescriptor: "Ojuju ExtraBold", resourceFile: "Ojuju-Variable"),
+            .init(id: "playfair-light-300", displayName: "Playfair Light 300", fontDescriptor: "Playfair Light", resourceFile: "Playfair-Variable"),
+            .init(id: "playfair-regular-400-italic", displayName: "Playfair Regular 400 Italic", fontDescriptor: "Playfair Italic", resourceFile: "Playfair-Italic-Variable"),
+            .init(id: "playfair-black-900", displayName: "Playfair Black 900", fontDescriptor: "Playfair Black", resourceFile: "Playfair-Variable"),
+            .init(id: "jetbrainsmono-regular-400", displayName: "JetBrains Mono Regular 400", fontDescriptor: "JetBrains Mono Regular", resourceFile: "JetBrainsMono-Variable"),
+            .init(id: "jetbrainsmono-regular-400-italic", displayName: "JetBrains Mono Regular 400 Italic", fontDescriptor: "JetBrains Mono Italic", resourceFile: "JetBrainsMono-Italic-Variable"),
+            .init(id: "jetbrainsmono-extrabold-800", displayName: "JetBrains Mono ExtraBold 800", fontDescriptor: "JetBrains Mono ExtraBold", resourceFile: "JetBrainsMono-Variable"),
+            .init(id: "borel-regular-400", displayName: "Borel Regular 400", fontDescriptor: "Borel Regular", resourceFile: "Borel-Regular"),
+        ]
+        return Dictionary(uniqueKeysWithValues: presets.map { ($0.id, $0) })
+    }()
+
     func boot(routes: any RoutesBuilder) throws {
         let demo = routes.grouped("demo")
 
@@ -15,21 +42,19 @@ struct DemoController: RouteCollection {
         demo.post("composite", use: compositeImage)
     }
 
-    // Advanced Text Rendering - Showcase ImageMagick capabilities
+    // Advanced Text Rendering - Showcase libvips (Pango/Cairo) capabilities
     func textOverlay(req: Request) async throws -> Response {
         req.logger.info("Received text overlay request")
 
-        // Comprehensive form input covering all ImageMagick text features
+        // Comprehensive form input covering advanced text features
         struct FormInput: Content {
             // Required
             var text: String
             var image: File
 
             // Font settings
-            var font: String?
-            var fontUrl: String?
+            var fontPreset: String?
             var fontSize: Int?
-            var fontWeight: Int?
             var dpi: Int?
 
             // Color settings
@@ -60,7 +85,7 @@ struct DemoController: RouteCollection {
 
             // Position settings
             var position: String?       // center, top, bottom, etc.
-            var gravity: String?        // ImageMagick gravity
+            var gravity: String?        // text gravity
             var x: Int?
             var y: Int?
         }
@@ -93,13 +118,13 @@ struct DemoController: RouteCollection {
         var textOptions = TextOptions()
 
         // Font
-        textOptions.font = try await resolveFontPath(
+        let resolvedFont = try resolveFontPreset(
             req: req,
-            font: input.font,
-            fontUrl: input.fontUrl
+            presetId: input.fontPreset
         )
+        textOptions.font = resolvedFont.font
+        textOptions.fontFile = resolvedFont.fontFile
         textOptions.fontSize = input.fontSize ?? 48
-        // Note: fontWeight parameter is accepted but not yet supported by Hokusai library
         textOptions.dpi = input.dpi ?? 72
 
         // Color with opacity
@@ -150,21 +175,23 @@ struct DemoController: RouteCollection {
             textOptions.gravity = gravity
         }
 
+        let renderPosition = parsePosition(input.position)
+        let renderX = try input.x ?? (image.width / 2)
+        let renderY = try input.y ?? (image.height / 2)
+
         // Draw text
         let withText: HokusaiImage
-        if let position = parsePosition(input.position) {
+        if let renderPosition {
             withText = try image.drawText(
                 input.text,
-                position: position,
+                position: renderPosition,
                 options: textOptions
             )
         } else {
-            let x = try input.x ?? (image.width / 2)
-            let y = try input.y ?? (image.height / 2)
             withText = try image.drawText(
                 input.text,
-                x: x,
-                y: y,
+                x: renderX,
+                y: renderY,
                 options: textOptions
             )
         }
@@ -279,17 +306,34 @@ struct DemoController: RouteCollection {
             let channels: Int
             let hasAlpha: Bool
             let format: String?
+            let extended: [String: String]?
         }
 
-        let image = try await req.hokusaiImage(field: "image")
+        struct FormInput: Content {
+            var image: File
+            var extended: String?
+        }
+
+        let input = try req.content.decode(FormInput.self)
+        guard let data = input.image.data.getData(
+            at: input.image.data.readerIndex,
+            length: input.image.data.readableBytes
+        ) else {
+            throw Abort(.badRequest, reason: "Failed to read image data")
+        }
+
+        let image = try await Hokusai.image(from: data)
         let metadata = try image.metadata()
+        let includeExtended = parseBoolean(input.extended)
+        let extended = includeExtended ? try image.extendedMetadata() : nil
 
         let response = MetadataResponse(
             width: metadata.width,
             height: metadata.height,
             channels: metadata.channels,
             hasAlpha: metadata.hasAlpha,
-            format: metadata.format?.rawValue
+            format: metadata.format?.rawValue,
+            extended: extended
         )
 
         return try await response.encodeResponse(for: req)
@@ -356,89 +400,64 @@ struct DemoController: RouteCollection {
 
     // MARK: - Text Helpers
 
-    private func resolveFontPath(
+    private func resolveFontPreset(
         req: Request,
-        font: String?,
-        fontUrl: String?
-    ) async throws -> String {
-        if let fontUrl = fontUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
-           !fontUrl.isEmpty {
-            return try await downloadFont(req: req, fontUrl: fontUrl)
+        presetId: String?
+    ) throws -> (font: String, fontFile: String?) {
+        let id = presetId?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalizedId = (id?.isEmpty == false) ? id! : Self.defaultFontPresetId
+
+        guard let preset = Self.fontPresets[normalizedId] else {
+            throw Abort(.badRequest, reason: "Unknown font preset '\(normalizedId)'")
         }
 
-        if let font = font?.trimmingCharacters(in: .whitespacesAndNewlines),
-           !font.isEmpty {
-            return font
+        let bundledPath =
+            Bundle.module.path(forResource: preset.resourceFile, ofType: "ttf", inDirectory: "Fonts")
+            ?? Bundle.module.path(forResource: preset.resourceFile, ofType: "ttf")
+
+        guard let bundledPath else {
+            throw Abort(.internalServerError, reason: "Bundled font '\(preset.resourceFile).ttf' is missing")
         }
 
-        if hasSystemFonts() {
-            return "sans"
-        }
-
-        throw Abort(.badRequest, reason: "No system fonts available. Provide font or fontUrl.")
-    }
-
-    private func downloadFont(req: Request, fontUrl: String) async throws -> String {
-        guard let url = URL(string: fontUrl),
-              let scheme = url.scheme?.lowercased(),
-              scheme == "https" || scheme == "http" else {
-            req.logger.error("Invalid font URL: \(fontUrl)")
-            throw Abort(.badRequest, reason: "Font URL must be http or https")
-        }
-
-        req.logger.info("Downloading font from: \(fontUrl)")
-        let response = try await req.client.get(URI(string: fontUrl))
-        guard response.status == .ok else {
-            req.logger.error("Failed to download font, status: \(response.status)")
-            throw Abort(.badRequest, reason: "Failed to download font: \(response.status)")
-        }
-
-        guard let buffer = response.body,
-              let data = buffer.getData(
-                at: buffer.readerIndex,
-                length: buffer.readableBytes
-              ) else {
-            throw Abort(.badRequest, reason: "Empty font response")
-        }
-
-        let fontsDir = FileManager.default.temporaryDirectory.appendingPathComponent("hokusai-fonts")
-        try FileManager.default.createDirectory(
-            at: fontsDir,
-            withIntermediateDirectories: true,
-            attributes: nil
+#if os(macOS)
+        _ = try installFontForMacOS(
+            req: req,
+            sourcePath: bundledPath,
+            targetFilename: "Hokusai-Preset-\(preset.resourceFile).ttf"
         )
-
-        let ext = url.pathExtension.isEmpty ? "ttf" : url.pathExtension
-        let filename = "\(UUID().uuidString).\(ext)"
-        let fileUrl = fontsDir.appendingPathComponent(filename)
-
-        try data.write(to: fileUrl)
-        return fileUrl.path
+        return (preset.fontDescriptor, nil)
+#else
+        return (preset.fontDescriptor, bundledPath)
+#endif
     }
 
-    private func hasSystemFonts() -> Bool {
-        let searchPaths = [
-            "/usr/share/fonts",
-            "/usr/local/share/fonts",
-            "/Library/Fonts",
-            "/System/Library/Fonts"
-        ]
+    private func installFontForMacOS(req: Request, sourcePath: String, targetFilename: String) throws -> String {
+        let fileManager = FileManager.default
+        let sourceUrl = URL(fileURLWithPath: sourcePath)
+        let userFontsDir = fileManager.homeDirectoryForCurrentUser.appendingPathComponent("Library/Fonts")
+        try fileManager.createDirectory(at: userFontsDir, withIntermediateDirectories: true, attributes: nil)
 
-        for path in searchPaths {
-            guard let enumerator = FileManager.default.enumerator(atPath: path) else {
-                continue
-            }
-
-            for case let item as String in enumerator {
-                let lowercased = item.lowercased()
-                if lowercased.hasSuffix(".ttf") || lowercased.hasSuffix(".otf") {
-                    return true
-                }
-            }
+        let installedUrl = userFontsDir.appendingPathComponent(targetFilename)
+        if fileManager.fileExists(atPath: installedUrl.path) {
+            try fileManager.removeItem(at: installedUrl)
         }
-
-        return false
+        try fileManager.copyItem(at: sourceUrl, to: installedUrl)
+        req.logger.info("Installed font to: \(installedUrl.path)")
+        return installedUrl.path
     }
+
+    private func parseBoolean(_ value: String?) -> Bool {
+        guard let raw = value?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(), !raw.isEmpty else {
+            return false
+        }
+        switch raw {
+        case "1", "true", "yes", "on":
+            return true
+        default:
+            return false
+        }
+    }
+
 
     private func parsePosition(_ value: String?) -> Position? {
         switch value?.lowercased() {

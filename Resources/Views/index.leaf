@@ -10,10 +10,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" media="(prefers-color-scheme: light)">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" media="(prefers-color-scheme: dark)">
-    <!-- Google Fonts with multiple weights -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         .dark pre[class*="language-"],
         .dark code[class*="language-"] {
@@ -77,6 +73,113 @@
         }
     </script>
     <style>
+        @font-face {
+            font-family: "Preset Afacad";
+            src: url("/fonts/Afacad-Variable.ttf") format("truetype");
+        }
+        @font-face {
+            font-family: "Preset Afacad Italic";
+            src: url("/fonts/Afacad-Italic-Variable.ttf") format("truetype");
+            font-style: italic;
+        }
+        @font-face {
+            font-family: "Preset Passero One";
+            src: url("/fonts/PasseroOne-Regular.ttf") format("truetype");
+        }
+        @font-face {
+            font-family: "Preset Ojuju";
+            src: url("/fonts/Ojuju-Variable.ttf") format("truetype");
+        }
+        @font-face {
+            font-family: "Preset Playfair";
+            src: url("/fonts/Playfair-Variable.ttf") format("truetype");
+        }
+        @font-face {
+            font-family: "Preset Playfair Italic";
+            src: url("/fonts/Playfair-Italic-Variable.ttf") format("truetype");
+            font-style: italic;
+        }
+        @font-face {
+            font-family: "Preset JetBrains Mono";
+            src: url("/fonts/JetBrainsMono-Variable.ttf") format("truetype");
+        }
+        @font-face {
+            font-family: "Preset JetBrains Mono Italic";
+            src: url("/fonts/JetBrainsMono-Italic-Variable.ttf") format("truetype");
+            font-style: italic;
+        }
+        @font-face {
+            font-family: "Preset Borel";
+            src: url("/fonts/Borel-Regular.ttf") format("truetype");
+        }
+
+        .font-preset-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .font-preset-radio {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .font-preset-card {
+            display: block;
+            border: 1px solid hsl(0 0% 20%);
+            border-radius: 0.625rem;
+            padding: 0.75rem;
+            background: hsl(0 0% 8%);
+            cursor: pointer;
+            transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+        }
+        .font-preset-card:hover {
+            border-color: hsl(0 0% 35%);
+            transform: translateY(-1px);
+        }
+        .font-preset-radio:checked + .font-preset-card {
+            border-color: hsl(0 0% 100%);
+            background: hsl(0 0% 12%);
+            box-shadow: 0 0 0 1px hsl(0 0% 100% / 0.25);
+        }
+        .font-preset-title {
+            font-size: 0.95rem;
+            line-height: 1.2rem;
+            color: hsl(0 0% 100%);
+        }
+        .font-preset-subtitle {
+            margin-top: 0.2rem;
+            font-size: 0.75rem;
+            color: hsl(0 0% 65%);
+        }
+
+        .preview-afacad-regular { font-family: "Preset Afacad", sans-serif; font-weight: 400; }
+        .preview-afacad-semibold-italic { font-family: "Preset Afacad Italic", sans-serif; font-style: italic; font-weight: 600; }
+        .preview-passeroone-regular { font-family: "Preset Passero One", sans-serif; font-weight: 400; }
+        .preview-ojuju-extralight { font-family: "Preset Ojuju", sans-serif; font-weight: 200; }
+        .preview-ojuju-extrabold { font-family: "Preset Ojuju", sans-serif; font-weight: 800; }
+        .preview-playfair-light { font-family: "Preset Playfair", serif; font-weight: 300; }
+        .preview-playfair-italic { font-family: "Preset Playfair Italic", serif; font-style: italic; font-weight: 400; }
+        .preview-playfair-black { font-family: "Preset Playfair", serif; font-weight: 900; }
+        .preview-jetbrains-regular { font-family: "Preset JetBrains Mono", monospace; font-weight: 400; }
+        .preview-jetbrains-italic { font-family: "Preset JetBrains Mono Italic", monospace; font-style: italic; font-weight: 400; }
+        .preview-jetbrains-extrabold { font-family: "Preset JetBrains Mono", monospace; font-weight: 800; }
+        .preview-borel-regular { font-family: "Preset Borel", cursive; font-weight: 400; }
+        @media (max-width: 1280px) {
+            .font-preset-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 1024px) {
+            .font-preset-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 640px) {
+            .font-preset-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .nav-item {
             display: block;
             padding: 0.5rem 0.75rem;
@@ -112,9 +215,13 @@
             margin: 0;
             padding: 1rem;
             overflow-x: auto;
-            font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'SF Mono', Monaco, Consolas, monospace;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-style: normal !important;
+            font-variant-ligatures: none;
+            font-feature-settings: "liga" 0, "calt" 0;
             line-height: 1.6;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            tab-size: 4;
         }
         .dark pre[class*="language-"],
         .dark code[class*="language-"] {
@@ -123,6 +230,18 @@
         pre[class*="language-"] code {
             background: transparent;
             padding: 0;
+        }
+        pre[class*="language-"] *,
+        code[class*="language-"] * {
+            text-shadow: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            background-image: none !important;
+        }
+        pre[class*="language-"] .token,
+        code[class*="language-"] .token {
+            background: transparent !important;
+            text-shadow: none !important;
         }
         .copy-button {
             position: absolute;
@@ -200,6 +319,23 @@
         }
         .feature-section.active {
             display: block;
+        }
+        .feature-section > .grid.grid-cols-2 {
+            grid-template-columns: 1fr !important;
+        }
+        .feature-section form {
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .feature-section form button[type="submit"] {
+            width: auto !important;
+            min-width: 220px;
+            display: block;
+            margin-left: auto;
+        }
+        .feature-section > .grid.grid-cols-2 > div:nth-child(2) {
+            display: none !important;
         }
         @keyframes fadeIn {
             from {
@@ -301,6 +437,9 @@
         }
         .result-content img:hover {
             transform: scale(1.02);
+        }
+        .result-code-panel pre[class*="language-"] {
+            margin-top: 0.5rem;
         }
         /* Theme toggle button */
         #theme-toggle {
@@ -421,7 +560,7 @@
             <!-- Text Overlay -->
             <div id="text-section" class="feature-section active">
                 <h2 class="text-2xl font-semibold mb-2">Advanced Text Rendering</h2>
-                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Showcase ImageMagick's full text rendering capabilities with custom fonts, colors, strokes, shadows, and more</p>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Showcase libvips + Pango/Cairo text rendering with bundled fonts, colors, strokes, shadows, and more</p>
 
                 <div class="grid grid-cols-2 gap-8">
                     <!-- Left: Form -->
@@ -453,31 +592,100 @@
                         <h3 class="text-sm font-semibold mb-3">Font Settings</h3>
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium mb-2">Font Family</label>
-                                <select id="fontSelect" name="fontFamily" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
-                                    <option value="">System Default</option>
-                                    <option value="Inter" data-category="sans-serif">Inter (Sans-serif)</option>
-                                    <option value="Playfair Display" data-category="serif">Playfair Display (Serif)</option>
-                                    <option value="JetBrains Mono" data-category="monospace">JetBrains Mono (Monospace)</option>
-                                </select>
-                                <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">Select a font family with full weight support (400-900)</p>
+                                <label class="block text-sm font-medium mb-2">Font Preset</label>
+                                <div class="font-preset-grid">
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-afacad-regular-400" name="fontPreset" value="afacad-regular-400" checked>
+                                        <label class="font-preset-card" for="font-preset-afacad-regular-400">
+                                            <div class="font-preset-title preview-afacad-regular">Afacad</div>
+                                            <div class="font-preset-subtitle">Regular 400</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-afacad-semibold-600-italic" name="fontPreset" value="afacad-semibold-600-italic">
+                                        <label class="font-preset-card" for="font-preset-afacad-semibold-600-italic">
+                                            <div class="font-preset-title preview-afacad-semibold-italic">Afacad</div>
+                                            <div class="font-preset-subtitle">SemiBold 600 Italic</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-passeroone-regular-400" name="fontPreset" value="passeroone-regular-400">
+                                        <label class="font-preset-card" for="font-preset-passeroone-regular-400">
+                                            <div class="font-preset-title preview-passeroone-regular">Passero One</div>
+                                            <div class="font-preset-subtitle">Regular 400</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-ojuju-extralight-200" name="fontPreset" value="ojuju-extralight-200">
+                                        <label class="font-preset-card" for="font-preset-ojuju-extralight-200">
+                                            <div class="font-preset-title preview-ojuju-extralight">Ojuju</div>
+                                            <div class="font-preset-subtitle">ExtraLight 200</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-ojuju-extrabold-800" name="fontPreset" value="ojuju-extrabold-800">
+                                        <label class="font-preset-card" for="font-preset-ojuju-extrabold-800">
+                                            <div class="font-preset-title preview-ojuju-extrabold">Ojuju</div>
+                                            <div class="font-preset-subtitle">ExtraBold 800</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-playfair-light-300" name="fontPreset" value="playfair-light-300">
+                                        <label class="font-preset-card" for="font-preset-playfair-light-300">
+                                            <div class="font-preset-title preview-playfair-light">Playfair</div>
+                                            <div class="font-preset-subtitle">Light 300</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-playfair-regular-400-italic" name="fontPreset" value="playfair-regular-400-italic">
+                                        <label class="font-preset-card" for="font-preset-playfair-regular-400-italic">
+                                            <div class="font-preset-title preview-playfair-italic">Playfair</div>
+                                            <div class="font-preset-subtitle">Regular 400 Italic</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-playfair-black-900" name="fontPreset" value="playfair-black-900">
+                                        <label class="font-preset-card" for="font-preset-playfair-black-900">
+                                            <div class="font-preset-title preview-playfair-black">Playfair</div>
+                                            <div class="font-preset-subtitle">Black 900</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-jetbrainsmono-regular-400" name="fontPreset" value="jetbrainsmono-regular-400">
+                                        <label class="font-preset-card" for="font-preset-jetbrainsmono-regular-400">
+                                            <div class="font-preset-title preview-jetbrains-regular">JetBrains Mono</div>
+                                            <div class="font-preset-subtitle">Regular 400</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-jetbrainsmono-regular-400-italic" name="fontPreset" value="jetbrainsmono-regular-400-italic">
+                                        <label class="font-preset-card" for="font-preset-jetbrainsmono-regular-400-italic">
+                                            <div class="font-preset-title preview-jetbrains-italic">JetBrains Mono</div>
+                                            <div class="font-preset-subtitle">Regular 400 Italic</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-jetbrainsmono-extrabold-800" name="fontPreset" value="jetbrainsmono-extrabold-800">
+                                        <label class="font-preset-card" for="font-preset-jetbrainsmono-extrabold-800">
+                                            <div class="font-preset-title preview-jetbrains-extrabold">JetBrains Mono</div>
+                                            <div class="font-preset-subtitle">ExtraBold 800</div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="font-preset-radio" type="radio" id="font-preset-borel-regular-400" name="fontPreset" value="borel-regular-400">
+                                        <label class="font-preset-card" for="font-preset-borel-regular-400">
+                                            <div class="font-preset-title preview-borel-regular">Borel</div>
+                                            <div class="font-preset-subtitle">Regular 400</div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">All presets use local bundled font files only.</p>
                             </div>
-                            <div class="grid grid-cols-4 gap-4">
+                            <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium mb-2">Font Size</label>
                                     <input type="number" name="fontSize" value="48" min="1"
                                            class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Font Weight</label>
-                                    <select name="fontWeight" class="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white">
-                                        <option value="400" selected>Normal (400)</option>
-                                        <option value="500">Medium (500)</option>
-                                        <option value="600">Semi-Bold (600)</option>
-                                        <option value="700">Bold (700)</option>
-                                        <option value="800">Extra-Bold (800)</option>
-                                        <option value="900">Black (900)</option>
-                                    </select>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-2">DPI</label>
@@ -702,9 +910,8 @@
                             <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/text \
   -F "image=@certificate.png" \
   -F "text=John Doe" \
-  -F "fontUrl=https://fonts.gstatic.com/.../playfairdisplay-700.ttf" \
+  -F "fontPreset=playfair-black-900" \
   -F "fontSize=72" \
-  -F "fontWeight=700" \
   -F "color=#2c3e50" \
   -F "position=center" \
   -o output.png</code></pre>
@@ -714,15 +921,11 @@
                             <pre><code class="language-swift">let image = try await Hokusai.image(from: "certificate.png")
 
 var options = TextOptions()
+options.font = "Playfair Black"
 options.fontSize = 72
-options.fontWeight = 700
 options.color = [44, 62, 80, 255]
-options.position = .center
 
-let result = try await image.text(
-    "John Doe",
-    options: options
-)
+let result = try image.drawText("John Doe", position: .center, options: options)
 
 try result.toFile("output.png")</code></pre>
                         </div>
@@ -1005,6 +1208,11 @@ try watermarked.toFile("output.png", quality: 90)</code></pre>
                         <input type="file" name="image" accept="image/*" required
                                class="block w-full text-sm border border-neutral-200 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-900 file:border-0 file:bg-neutral-100 dark:file:bg-neutral-800 file:text-black dark:file:text-white file:px-4 file:py-2 file:mr-4">
                     </div>
+                    <label for="metadataExtended" class="inline-flex items-center gap-3 cursor-pointer select-none">
+                        <input type="checkbox" id="metadataExtended" name="extended" value="true"
+                               class="h-4 w-4 rounded border-neutral-300 text-black focus:ring-neutral-900 dark:border-neutral-600 dark:bg-neutral-900">
+                        <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">Extended metadata (all libvips fields)</span>
+                    </label>
                     <button type="submit" class="w-full bg-black dark:bg-white text-white dark:text-black px-4 py-2.5 rounded-md text-sm hover:bg-neutral-900 dark:hover:bg-neutral-200 transition-colors">
                         Get Metadata
                     </button>
@@ -1016,18 +1224,21 @@ try watermarked.toFile("output.png", quality: 90)</code></pre>
                         <div>
                             <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">cURL</h3>
                             <pre><code class="language-bash">curl -X POST http://localhost:8080/demo/metadata \
-  -F "image=@photo.jpg"</code></pre>
+  -F "image=@photo.jpg" \
+  -F "extended=true"</code></pre>
                         </div>
                         <div>
                             <h3 class="text-sm font-semibold mb-2 text-neutral-500 dark:text-neutral-400">Swift</h3>
                             <pre><code class="language-swift">let image = try await Hokusai.image(from: "photo.jpg")
-let metadata = try image.metadata()
+let metadata = try image.metadata() // basic
+let extended = try image.extendedMetadata() // all available libvips fields
 
 print("Width: \(metadata.width)")
 print("Height: \(metadata.height)")
 print("Format: \(metadata.format?.rawValue ?? "unknown")")
 print("Channels: \(metadata.channels)")
-print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
+print("Has Alpha: \(metadata.hasAlpha)")
+print("EXIF orientation: \(extended["exif-ifd0-Orientation"] ?? "n/a")")</code></pre>
                         </div>
                     </div>
                 </div>
@@ -1043,6 +1254,12 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
                 <div class="result-content">
                     <div class="text-center text-neutral-500 dark:text-neutral-400 text-sm py-12">
                         <p>Upload and process an image to see the result here</p>
+                    </div>
+                </div>
+                <div class="result-code-panel mt-6 border-t border-neutral-200 pt-4 dark:border-neutral-800">
+                    <h4 class="text-xs font-semibold tracking-wide text-neutral-500 dark:text-neutral-400">Code Examples</h4>
+                    <div id="side-code-examples" class="mt-2">
+                        <div class="text-sm text-neutral-500 dark:text-neutral-400">Code examples will appear here for the selected feature.</div>
                     </div>
                 </div>
             </div>
@@ -1103,6 +1320,22 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
 
             // Trigger syntax highlighting
             Prism.highlightAll();
+            syncCodeExamplesToSidePanel();
+        }
+
+        function syncCodeExamplesToSidePanel() {
+            const sidePanel = document.getElementById('side-code-examples');
+            const activeSection = document.querySelector('.feature-section.active');
+            if (!sidePanel || !activeSection) return;
+
+            const codeColumn = activeSection.querySelector(':scope > .grid.grid-cols-2 > div:nth-child(2)');
+            if (!codeColumn) {
+                sidePanel.innerHTML = '<div class="text-sm text-neutral-500 dark:text-neutral-400">No code examples for this feature.</div>';
+                return;
+            }
+
+            sidePanel.innerHTML = codeColumn.innerHTML;
+            Prism.highlightAllUnder(sidePanel);
         }
 
         // Handle form submissions
@@ -1115,10 +1348,6 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
             // Build clean FormData - only include enabled inputs with values
             const formData = new FormData();
             const formElements = form.elements;
-
-            // Track fontFamily and fontWeight for URL generation
-            let fontFamily = null;
-            let fontWeight = null;
 
             for (let i = 0; i < formElements.length; i++) {
                 const element = formElements[i];
@@ -1134,24 +1363,22 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
                         formData.append(element.name, element.files[0]);
                     }
                 }
-                // Handle fontFamily - store but don't append yet
-                else if (element.name === 'fontFamily' && element.value && element.value.trim() !== '') {
-                    fontFamily = element.value.trim();
+                // Handle checkboxes
+                else if (element.type === 'checkbox') {
+                    if (element.checked) {
+                        formData.append(element.name, element.value || 'true');
+                    }
                 }
-                // Handle fontWeight - store for URL generation
-                else if (element.name === 'fontWeight' && element.value && element.value.trim() !== '') {
-                    fontWeight = parseInt(element.value);
-                    formData.append(element.name, element.value);
+                // Handle radio groups
+                else if (element.type === 'radio') {
+                    if (element.checked) {
+                        formData.append(element.name, element.value);
+                    }
                 }
-                // Handle other inputs - only add if they have a value
+                // Handle all other inputs - only add if they have a value
                 else if (element.value && element.value.trim() !== '') {
                     formData.append(element.name, element.value);
                 }
-            }
-
-            // Convert fontFamily + fontWeight to fontUrl
-            if (fontFamily && fontWeight && fontUrlMap[fontFamily] && fontUrlMap[fontFamily][fontWeight]) {
-                formData.append('fontUrl', fontUrlMap[fontFamily][fontWeight]);
             }
 
             // Show loading state
@@ -1184,7 +1411,7 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
                 if (contentType && contentType.includes('application/json')) {
                     // Handle JSON response (metadata)
                     const data = await response.json();
-                    resultPanel.innerHTML = '<pre class="text-sm bg-neutral-100 dark:bg-neutral-800 p-4 rounded-md overflow-auto">' +
+                    resultPanel.innerHTML = '<pre class="text-sm bg-neutral-100 dark:bg-neutral-800 p-4 rounded-md overflow-auto max-h-[70vh] whitespace-pre-wrap break-all">' +
                         JSON.stringify(data, null, 2) + '</pre>';
                 } else if (contentType && contentType.startsWith('image/')) {
                     // Handle image response
@@ -1199,34 +1426,6 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
             }
         }
 
-        // Font weight to Google Fonts URL mapping
-        const fontUrlMap = {
-            'Inter': {
-                400: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.ttf',
-                500: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fAZ9hiA.ttf',
-                600: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYAZ9hiA.ttf',
-                700: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYAZ9hiA.ttf',
-                800: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuDyYAZ9hiA.ttf',
-                900: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuBWYAZ9hiA.ttf'
-            },
-            'Playfair Display': {
-                400: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf',
-                500: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKd3vUDQZNLo_U2r.ttf',
-                600: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKebukDQZNLo_U2r.ttf',
-                700: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKeiukDQZNLo_U2r.ttf',
-                800: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKfFukDQZNLo_U2r.ttf',
-                900: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKfsukDQZNLo_U2r.ttf'
-            },
-            'JetBrains Mono': {
-                400: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTOlOVgaY.ttf',
-                500: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjOlOVgaY.ttf',
-                600: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKw7PVOVgaY.ttf',
-                700: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwCPVOVgaY.ttf',
-                800: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPVOVgaY.ttf',
-                900: 'https://fonts.gstatic.com/s/jetbrainsmono/v13/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxKPVOVgaY.ttf'
-            }
-        };
-
         // Initial syntax highlighting
         document.addEventListener('DOMContentLoaded', function() {
             Prism.highlightAll();
@@ -1235,6 +1434,7 @@ print("Has Alpha: \(metadata.hasAlpha)")</code></pre>
             document.querySelectorAll('form').forEach(form => {
                 form.addEventListener('submit', handleFormSubmit);
             });
+            syncCodeExamplesToSidePanel();
 
             // Toggle inputs based on checkboxes
             function setupToggle(checkboxId, inputIds, detailsElement) {

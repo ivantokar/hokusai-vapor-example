@@ -12,8 +12,9 @@ A production-ready Vapor application demonstrating the full capabilities of [Hok
 
 - **Interactive Web UI** - Modern interface for testing all image operations
 - **Dark Mode** - Pure monochromatic theme with smooth transitions
-- **Advanced Text Demo** - Showcase ImageMagick's full text rendering capabilities
-  - Custom Google Fonts with all weight variants (400-900)
+- **Advanced Text Demo** - Showcase libvips + Pango/Cairo text rendering
+  - Local font presets only (no remote downloads)
+  - Preset cards with fixed family + weight/style combinations
   - Stroke/outline with customizable width and color
   - Drop shadows with offset and opacity control
   - Typography controls (kerning, line spacing, alignment)
@@ -30,17 +31,22 @@ A production-ready Vapor application demonstrating the full capabilities of [Hok
 - **Reference** - Production-ready code examples and patterns
 - **Starter Template** - Clone and customize for your own image processing API
 
+## Related Projects
+
+- [Hokusai](https://github.com/ivantokar/hokusai) - Core image processing library
+- [HokusaiVapor](https://github.com/ivantokar/hokusai-vapor) - Vapor integration
+
 ## Prerequisites
 
 ### macOS
 ```bash
-brew install vips imagemagick pkg-config
+brew install vips pkg-config
 ```
 
 ### Ubuntu/Debian
 ```bash
 sudo apt update
-sudo apt install libvips-dev libmagick++-dev libmagickwand-dev pkg-config
+sudo apt install libvips-dev pkg-config
 ```
 
 ## Run Locally
@@ -74,20 +80,20 @@ Open http://localhost:8081
 - **REST API** - Production-ready endpoints for all operations
 - **Sample Assets** - Test images, certificates, watermarks
 - **Documentation** - Comprehensive examples and API usage
-- **Docker Config** - Multi-stage build with libvips + ImageMagick
+- **Docker Config** - Multi-stage build with libvips
 
 ## Testing Endpoints
 
-### Advanced Text Rendering (ImageMagick)
+### Advanced Text Rendering (libvips + Pango/Cairo)
 
-The demo showcases ImageMagick's comprehensive text rendering capabilities:
+The demo uses local bundled presets only.
 
 ```bash
-# Basic text overlay with Google Font
+# Basic text overlay with preset
 curl -X POST http://localhost:8081/demo/text \
   -F "image=@TestAssets/certifcate.png" \
   -F "text=John Doe" \
-  -F "fontUrl=https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf" \
+  -F "fontPreset=playfair-black-900" \
   -F "fontSize=72" \
   -F "color=#2c3e50" \
   -F "position=center" \
@@ -97,8 +103,8 @@ curl -X POST http://localhost:8081/demo/text \
 curl -X POST http://localhost:8081/demo/text \
   -F "image=@TestAssets/sample-photo.jpg" \
   -F "text=Hello World" \
+  -F "fontPreset=jetbrainsmono-extrabold-800" \
   -F "fontSize=64" \
-  -F "fontUrl=https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf" \
   -F "color=#FFFFFF" \
   -F "opacity=0.9" \
   -F "strokeWidth=2" \
@@ -114,7 +120,7 @@ curl -X POST http://localhost:8081/demo/text \
 ```
 
 **Supported text features:**
-- Custom fonts via Google Fonts URLs or local paths
+- Local bundled preset cards only
 - Font size, DPI, alignment (left/center/right)
 - Color with hex (#RRGGBB) or RGBA values
 - Text opacity (0.0-1.0)
@@ -156,8 +162,8 @@ curl -X POST http://localhost:8081/demo/composite \
   -o watermarked.png
 ```
 
-## Documentation
+## Releases
 
-For full API documentation and usage examples, see:
-- [Hokusai](https://github.com/ivantokar/hokusai) - Core image processing library
-- [HokusaiVapor](https://github.com/ivantokar/hokusai-vapor) - Vapor integration
+Hokusai Vapor Example follows semantic version tags in the format `vX.Y.Z`.
+
+- Human-curated release notes are tracked in [CHANGELOG.md](CHANGELOG.md).
