@@ -1,5 +1,5 @@
 {
-  "originHash" : "91e74586fdb50c82acdf8019ca2639a377bcdc049f02edf645cb8c6222414f73",
+  "originHash" : "bb508c5644add7385d10c1ae7da1cd7df844f8c3f2330f30fa022048ec614b7d",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -26,24 +26,6 @@
       "state" : {
         "revision" : "742f624a998cba2a9e653d9b1e91ad3f3a5dff6b",
         "version" : "4.15.2"
-      }
-    },
-    {
-      "identity" : "hokusai",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ivantokar/hokusai.git",
-      "state" : {
-        "revision" : "cb4c85d6b798f3944b200ff4d94ea0529aa5a7a2",
-        "version" : "0.1.0"
-      }
-    },
-    {
-      "identity" : "hokusai-vapor",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ivantokar/hokusai-vapor.git",
-      "state" : {
-        "revision" : "a21acb4cdabf8eec1c31643eee80fb38b00b20c8",
-        "version" : "0.1.0"
       }
     },
     {

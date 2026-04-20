@@ -133,9 +133,15 @@ func routes(_ app: Application) throws {
     }
 
     api.post("metadata") { req async throws -> MetadataResponse in
+        struct MetadataQuery: Content {
+            let extended: Bool?
+        }
+
+        let query = try req.query.decode(MetadataQuery.self)
         let imageData = try requestBodyData(req)
         let image = try await Hokusai.image(from: imageData)
         let metadata = try image.metadata()
+        let extended = (query.extended ?? false) ? try image.extendedMetadata() : nil
 
         return MetadataResponse(
             width: metadata.width,
@@ -146,7 +152,8 @@ func routes(_ app: Application) throws {
             hasAlpha: metadata.hasAlpha,
             orientation: metadata.orientation,
             density: metadata.density,
-            pages: metadata.pages
+            pages: metadata.pages,
+            extended: extended
         )
     }
 
@@ -164,6 +171,7 @@ private struct MetadataResponse: Content {
     let orientation: Int?
     let density: Double?
     let pages: Int?
+    let extended: [String: String]?
 }
 
 private func requestBodyData(_ req: Request) throws -> Data {

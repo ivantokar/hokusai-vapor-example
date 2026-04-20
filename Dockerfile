@@ -10,12 +10,7 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get install -y \
       libjemalloc-dev \
       libvips-dev \
-      libmagick++-dev \
-      libmagickwand-dev \
       pkg-config
-
-# Create pkg-config symlinks for ImageMagick compatibility
-RUN ln -s /usr/lib/$(uname -m)-linux-gnu/pkgconfig/MagickWand-6.Q16.pc /usr/lib/$(uname -m)-linux-gnu/pkgconfig/MagickWand.pc || true
 
 # Set up a build area
 WORKDIR /build
@@ -64,8 +59,6 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
       ca-certificates \
       tzdata \
       libvips \
-      libmagickcore-6.q16-7 \
-      libmagickwand-6.q16-7 \
       fontconfig \
     && rm -r /var/lib/apt/lists/*
 
