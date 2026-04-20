@@ -31,6 +31,11 @@ A production-ready Vapor application demonstrating the full capabilities of [Hok
 - **Reference** - Production-ready code examples and patterns
 - **Starter Template** - Clone and customize for your own image processing API
 
+## Related Projects
+
+- [Hokusai](https://github.com/ivantokar/hokusai) - Core image processing library
+- [HokusaiVapor](https://github.com/ivantokar/hokusai-vapor) - Vapor integration
+
 ## Prerequisites
 
 ### macOS
@@ -156,12 +161,6 @@ curl -X POST http://localhost:8081/demo/composite \
   -F "mode=over" \
   -o watermarked.png
 ```
-
-## Documentation
-
-For full API documentation and usage examples, see:
-- [Hokusai](https://github.com/ivantokar/hokusai) - Core image processing library
-- [HokusaiVapor](https://github.com/ivantokar/hokusai-vapor) - Vapor integration
 
 ## Releases
 
