@@ -76,7 +76,7 @@ echo ""
 # Test 6: Certificate text with Google Font
 echo "6. Testing certificate text with Google Font..."
 curl -s -X POST "$BASE_URL/demo/text" \
-  -F "image=@TestAssets/certifcate.png" \
+  -F "image=@TestAssets/certificate.png" \
   -F "text=Test User" \
   -F "fontUrl=https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf" \
   -F "fontSize=96" \

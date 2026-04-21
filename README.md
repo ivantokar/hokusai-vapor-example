@@ -91,7 +91,7 @@ The demo uses local bundled presets only.
 ```bash
 # Basic text overlay with preset
 curl -X POST http://localhost:8081/demo/text \
-  -F "image=@TestAssets/certifcate.png" \
+  -F "image=@TestAssets/certificate.png" \
   -F "text=John Doe" \
   -F "fontPreset=playfair-black-900" \
   -F "fontSize=72" \
