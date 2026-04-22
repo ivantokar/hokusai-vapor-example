@@ -10,13 +10,13 @@ let package = Package(
         .executable(name: "HokusaiVaporExample", targets: ["HokusaiVaporExample"])
     ],
     dependencies: [
-        // A server-side Swift web framework.
+        // PURPOSE: A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.115.0"),
-        // An expressive, performant, and extensible templating language built for Swift.
+        // PURPOSE: An expressive, performant, and extensible templating language built for Swift.
         .package(url: "https://github.com/vapor/leaf.git", from: "4.3.0"),
-        // Non-blocking, event-driven networking for Swift. Used for custom executors
+        // PURPOSE: Non-blocking, event-driven networking for Swift. Used for custom executors
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.65.0"),
-        // Hokusai Vapor integration
+        // PURPOSE: Hokusai Vapor integration
         .package(url: "https://github.com/ivantokar/hokusai-vapor.git", from: "0.2.0"),
     ],
     targets: [
