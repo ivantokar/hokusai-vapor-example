@@ -42,48 +42,48 @@ struct DemoController: RouteCollection {
         demo.post("composite", use: compositeImage)
     }
 
-    // Advanced Text Rendering - Showcase libvips (Pango/Cairo) capabilities
+    // PURPOSE: Advanced Text Rendering - Showcase libvips (Pango/Cairo) capabilities
     func textOverlay(req: Request) async throws -> Response {
         req.logger.info("Received text overlay request")
 
-        // Comprehensive form input covering advanced text features
+        // PURPOSE: Comprehensive form input covering advanced text features
         struct FormInput: Content {
-            // Required
+            // PURPOSE: Required
             var text: String
             var image: File
 
-            // Font settings
+            // PURPOSE: Font settings
             var fontPreset: String?
             var fontSize: Int?
             var dpi: Int?
 
-            // Color settings
+            // PURPOSE: Color settings
             var color: String?          // Hex (#RRGGBB or #RRGGBBAA) or comma-separated RGBA
             var opacity: Double?        // 0.0-1.0 (affects text color alpha)
 
-            // Stroke/Outline settings
+            // PURPOSE: Stroke/Outline settings
             var strokeWidth: Double?
             var strokeColor: String?
             var strokeOpacity: Double?  // 0.0-1.0
 
-            // Shadow settings
+            // PURPOSE: Shadow settings
             var shadowOffsetX: Double?
             var shadowOffsetY: Double?
             var shadowColor: String?
             var shadowOpacity: Double?  // 0.0-1.0
 
-            // Typography settings
+            // PURPOSE: Typography settings
             var kerning: Double?
             var lineSpacing: Double?
             var align: String?          // left, center, right
             var textWidth: Int?         // Text wrapping width
             var textHeight: Int?        // Text height limit
 
-            // Transform settings
+            // PURPOSE: Transform settings
             var rotation: Double?       // Degrees
             var antialiasing: String?   // true/false
 
-            // Position settings
+            // PURPOSE: Position settings
             var position: String?       // center, top, bottom, etc.
             var gravity: String?        // text gravity
             var x: Int?
@@ -99,7 +99,7 @@ struct DemoController: RouteCollection {
             throw Abort(.badRequest, reason: "Invalid form data: \(error.localizedDescription)")
         }
 
-        // Load image from uploaded file
+        // PURPOSE: Load image from uploaded file
         guard let data = input.image.data.getData(
             at: input.image.data.readerIndex,
             length: input.image.data.readableBytes
@@ -114,10 +114,10 @@ struct DemoController: RouteCollection {
         let imageHeight = try image.height
         req.logger.info("Image loaded successfully: \(imageWidth)x\(imageHeight)")
 
-        // Build comprehensive text options
+        // PURPOSE: Build comprehensive text options
         var textOptions = TextOptions()
 
-        // Font
+        // PURPOSE: Font
         let resolvedFont = try resolveFontPreset(
             req: req,
             presetId: input.fontPreset
@@ -127,14 +127,14 @@ struct DemoController: RouteCollection {
         textOptions.fontSize = input.fontSize ?? 48
         textOptions.dpi = input.dpi ?? 72
 
-        // Color with opacity
+        // PURPOSE: Color with opacity
         var baseColor = parseRGBA(input.color) ?? [255, 255, 255, 255]
         if let opacity = input.opacity {
             baseColor[3] = clampOpacity(opacity) * 255
         }
         textOptions.color = baseColor
 
-        // Stroke with opacity
+        // PURPOSE: Stroke with opacity
         if let strokeWidth = input.strokeWidth {
             textOptions.strokeWidth = strokeWidth
             var strokeCol = parseRGBA(input.strokeColor) ?? [0, 0, 0, 255]
@@ -144,7 +144,7 @@ struct DemoController: RouteCollection {
             textOptions.strokeColor = strokeCol
         }
 
-        // Shadow settings
+        // PURPOSE: Shadow settings
         if let shadowX = input.shadowOffsetX,
            let shadowY = input.shadowOffsetY {
             textOptions.shadowOffset = (x: shadowX, y: shadowY)
@@ -156,7 +156,7 @@ struct DemoController: RouteCollection {
             textOptions.shadowColor = shadowCol
         }
 
-        // Typography
+        // PURPOSE: Typography
         textOptions.kerning = input.kerning
         textOptions.lineSpacing = input.lineSpacing
         textOptions.width = input.textWidth
@@ -166,11 +166,11 @@ struct DemoController: RouteCollection {
             textOptions.align = align
         }
 
-        // Transform
+        // PURPOSE: Transform
         textOptions.rotation = input.rotation
         textOptions.antialiasing = !(input.antialiasing?.lowercased() == "false")
 
-        // Gravity
+        // PURPOSE: Gravity
         if let gravity = parseGravity(input.gravity) {
             textOptions.gravity = gravity
         }
@@ -179,7 +179,7 @@ struct DemoController: RouteCollection {
         let renderX = try input.x ?? (image.width / 2)
         let renderY = try input.y ?? (image.height / 2)
 
-        // Draw text
+        // PURPOSE: Draw text
         let withText: HokusaiImage
         if let renderPosition {
             withText = try image.drawText(
@@ -199,7 +199,7 @@ struct DemoController: RouteCollection {
         return try withText.response(format: "png")
     }
 
-    // Resize Image
+    // PURPOSE: Resize Image
     func resizeImage(req: Request) async throws -> Response {
         struct FormInput: Content {
             var width: Int?
@@ -220,7 +220,7 @@ struct DemoController: RouteCollection {
 
         var options = ResizeOptions()
 
-        // Map fit mode
+        // PURPOSE: Map fit mode
         switch input.fit {
         case "cover":
             options.fit = .cover
@@ -241,7 +241,7 @@ struct DemoController: RouteCollection {
         return try resized.response(format: "jpeg", quality: 85)
     }
 
-    // Convert Format
+    // PURPOSE: Convert Format
     func convertFormat(req: Request) async throws -> Response {
         struct FormInput: Content {
             var format: String
@@ -265,7 +265,7 @@ struct DemoController: RouteCollection {
         )
     }
 
-    // Rotate Image
+    // PURPOSE: Rotate Image
     func rotateImage(req: Request) async throws -> Response {
         struct FormInput: Content {
             var angle: Int
@@ -298,7 +298,7 @@ struct DemoController: RouteCollection {
         return try rotated.response(format: "jpeg", quality: 85)
     }
 
-    // Get Metadata
+    // PURPOSE: Get Metadata
     func getMetadata(req: Request) async throws -> Response {
         struct MetadataResponse: Content {
             let width: Int
@@ -339,7 +339,7 @@ struct DemoController: RouteCollection {
         return try await response.encodeResponse(for: req)
     }
 
-    // Composite/Watermark
+    // PURPOSE: Composite/Watermark
     func compositeImage(req: Request) async throws -> Response {
         struct FormInput: Content {
             var x: Int?
@@ -370,7 +370,7 @@ struct DemoController: RouteCollection {
 
         let overlay = try await Hokusai.image(from: overlayData)
 
-        // Parse blend mode
+        // PURPOSE: Parse blend mode
         let blendMode: BlendMode
         switch input.mode {
         case "add":
@@ -381,7 +381,7 @@ struct DemoController: RouteCollection {
             blendMode = .over
         }
 
-        // Create composite options
+        // PURPOSE: Create composite options
         var options = CompositeOptions()
         options.mode = blendMode
         if let opacity = input.opacity {

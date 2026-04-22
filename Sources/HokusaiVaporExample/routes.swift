@@ -3,7 +3,7 @@ import HokusaiVapor
 import Hokusai
 
 func routes(_ app: Application) throws {
-    // Serve the web UI
+    // PURPOSE: Serve the web UI
     app.get { req async throws in
         try await req.view.render("index")
     }
@@ -19,7 +19,7 @@ func routes(_ app: Application) throws {
     let api = app.grouped("api")
     let images = api.grouped("images")
 
-    // Convert image format from raw request body
+    // PURPOSE: Convert image format from raw request body
     images.post("convert") { req async throws -> Response in
         struct ConvertQuery: Content {
             let format: String
@@ -46,7 +46,7 @@ func routes(_ app: Application) throws {
         )
     }
 
-    // Add text overlay to image from raw request body
+    // PURPOSE: Add text overlay to image from raw request body
     images.post("text") { req async throws -> Response in
         struct TextQuery: Content {
             let text: String
@@ -94,7 +94,7 @@ func routes(_ app: Application) throws {
         )
     }
 
-    // Resize from raw request body
+    // PURPOSE: Resize from raw request body
     images.post("resize") { req async throws -> Response in
         struct ResizeQuery: Content {
             let width: Int?
@@ -157,7 +157,7 @@ func routes(_ app: Application) throws {
         )
     }
 
-    // Register controllers
+    // PURPOSE: Register controllers
     try app.register(collection: DemoController())
 }
 
